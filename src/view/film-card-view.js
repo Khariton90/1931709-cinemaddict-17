@@ -32,7 +32,7 @@ const createFilmCardTemplate = (film = {}) => {
     <button class="film-card__controls-item film-card__controls-item--favorite film-card__controls-item--active" type="button">Mark as favorite</button>
   </div>
 </article>`
-);
+  );
 };
 
 
