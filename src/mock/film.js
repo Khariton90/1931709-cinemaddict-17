@@ -1,4 +1,4 @@
-import { getRandomInteger, humanizeTime, humanizeDate } from '../utils';
+import { getRandomInteger, getHumanizeTime, getHumanizeDate } from '../utils';
 
 const films = [
   {
@@ -62,7 +62,7 @@ const generateFilm = () => {
 
   return ({
     id: 1,
-    comments: [1,2,3,4,5],
+    comments: [1, 2, 3, 4, 5],
     filmInfo: {
       title: films[randomIndex].title.replaceAll('-', ' '),
       alternativeTitle: 'Laziness Who Sold Themselves',
@@ -77,10 +77,10 @@ const generateFilm = () => {
         'Morgan Freeman'
       ],
       release: {
-        date: humanizeDate('2019-05-11T00:00:00.000Z'),
+        date: getHumanizeDate('2019-05-11T00:00:00.000Z'),
         releaseCountry: 'Finland'
       },
-      runtime: humanizeTime(77),
+      runtime: getHumanizeTime(77),
       genre: [
         'Comedy'
       ],

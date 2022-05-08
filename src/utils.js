@@ -7,8 +7,16 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower));
 };
 
-const humanizeDate = (dueDate) => dayjs(dueDate).format('DD MMMM YYYY');
-const humanizeTime = (time) => {
+const getHumanizeDate = (dueDate) => dayjs(dueDate).format('DD MMMM YYYY');
+
+const getHumanizeYear = (date) => {
+  const from = date.length - 4;
+  const to = date.length;
+
+  return date.substring(from, to);
+};
+
+const getHumanizeTime = (time) => {
   const hours = Math.floor(time / 60);
   const remainMinutes = time - (hours * 60);
   const minutes = remainMinutes < 10 ? `0${remainMinutes}` : remainMinutes;
@@ -16,4 +24,4 @@ const humanizeTime = (time) => {
   return currentTime;
 };
 
-export { getRandomInteger, humanizeDate, humanizeTime };
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear };

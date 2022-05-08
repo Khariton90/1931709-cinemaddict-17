@@ -19,7 +19,7 @@ const createFilmDetailsTopView = (film) => {
   const getGenre = (genres) => genres.map((item) => `<span class="film-details__genre">${item}</span>`);
   const titleGenre = genre.length > 1 ? 'Genres' : 'Genre';
 
-  return(
+  return (
     `<div class="film-details__top-container">
     <div class="film-details__close">
       <button class="film-details__close-btn" type="button">close</button>
@@ -84,7 +84,8 @@ const createFilmDetailsTopView = (film) => {
       <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
     </section>
   </div>`
-  );};
+  );
+};
 
 export default class FilmDetailTopView {
   constructor(film) {
