@@ -7,7 +7,6 @@ import FilmDetailsPopupView from '../view/film-details-popup-view';
 import FilmDetailsTopView from '../view/film-details/film-details-top-view';
 import FilmDetailsBottomView from '../view/film-details/film-details-bottom-view';
 import { CommentView } from '../view/film-details/comment-view';
-import { isEscapeKey } from '../utils';
 
 export default class BoardPresenter {
   boardComponent = new FilmsListContainerView();
