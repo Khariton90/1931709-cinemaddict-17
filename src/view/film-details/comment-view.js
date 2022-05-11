@@ -1,9 +1,9 @@
 import { createElement } from '../../render';
 
 const createCommentViewTemplate = (popupComment) => {
-  const {emotion, comment, author,date} = popupComment;
+  const { emotion, comment, author, date } = popupComment;
 
-  return(
+  return (
     `<li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -17,7 +17,8 @@ const createCommentViewTemplate = (popupComment) => {
     </p>
   </div>
 </li>`
-  );};
+  );
+};
 
 export class CommentView {
   constructor(popupComment) {

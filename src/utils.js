@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER } from './consts';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -7,19 +8,19 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower));
 };
 
-const getHumanizeDate = (dueDate) => dayjs(dueDate).format('DD MMMM YYYY');
+const getHumanizeDate = (dueDate) => dayjs(dueDate).format(FORMAT_DATE);
 
 const getHumanizeYear = (date) => {
-  const from = date.length - 4;
+  const from = date.length - LAST_FOUR_DIGITS_OF_YEAR;
   const to = date.length;
 
   return date.substring(from, to);
 };
 
 const getHumanizeTime = (time) => {
-  const hours = Math.floor(time / 60);
-  const remainMinutes = time - (hours * 60);
-  const minutes = remainMinutes < 10 ? `0${remainMinutes}` : remainMinutes;
+  const hours = Math.floor(time / MINUTES_PER_HOUR);
+  const remainMinutes = time - (hours * MINUTES_PER_HOUR);
+  const minutes = remainMinutes < TWO_DIGIT_NUMBER ? `0${remainMinutes}` : remainMinutes;
   const currentTime = `${hours}h ${minutes}m`;
   return currentTime;
 };
