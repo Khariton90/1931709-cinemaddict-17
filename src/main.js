@@ -1,12 +1,14 @@
-import BoardPresenter from './presenter/board_presenter';
+import FilmsModel from './model/film-model';
+import BoardPresenter from './presenter/board-presenter';
 import { render } from './render';
-import FilmDetailsPopupView from './view/film-details-popup-view';
 import RatingView from './view/rating-view';
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = document.querySelector('.header');
 const boardPresenter = new BoardPresenter();
 
+const filmsModel = new FilmsModel();
+
 render(new RatingView(), siteHeaderElement);
-render(new FilmDetailsPopupView(), document.body);
-boardPresenter.init(siteMainElement);
+
+boardPresenter.init(siteMainElement, filmsModel);
