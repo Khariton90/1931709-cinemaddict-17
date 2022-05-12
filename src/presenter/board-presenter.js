@@ -66,20 +66,24 @@ export default class BoardPresenter {
     render(filmCardComponent, this.#boardComponent.element);
 
     filmCardComponent.element.addEventListener('click', () => {
-      this.#renderPopup(card);
+      if (document.body.classList.contains('hide-overflow')) {
+        this.#removePopup();
+        this.#renderPopup(card);
+      } else {
+        this.#renderPopup(card);
+      }
     });
   };
 
-  #renderPopup = (film) => {
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        this.#removePopup();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#removePopup();
+    }
+  };
 
-    document.addEventListener('keydown', onEscKeyDown);
+  #renderPopup = (film) => {
+    document.addEventListener('keydown', this.#onEscKeyDown);
 
     render(this.#popupComponent, document.body);
     render(new FilmDetailsTopView(film), document.querySelector('.film-details__inner'));
@@ -89,10 +93,8 @@ export default class BoardPresenter {
     filteredComments.forEach((el) => render(new CommentView(el), document.querySelector('.film-details__comments-list')));
 
     document.body.classList.add('hide-overflow');
-
     this.#popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
       this.#removePopup();
-      document.removeEventListener('keydown', onEscKeyDown);
     });
   };
 
@@ -100,5 +102,6 @@ export default class BoardPresenter {
     document.body.querySelector('.film-details').remove();
     document.body.classList.remove('hide-overflow');
     this.#popupComponent.removeElement();
+    document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 }
