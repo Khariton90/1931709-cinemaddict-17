@@ -1,10 +1,18 @@
 import { generateComment } from '../mock/comment';
 import { generateFilm } from '../mock/film';
 
-export default class FilmsModel {
-  films = Array.from({length: 10}, generateFilm);
-  comments = Array.from({length: 10}, generateComment);
+const FILMS_MAX_LENGTH = 22;
+const COMMENTS_MAX_LENGTH = 10;
 
-  getFilms = () => this.films;
-  getComments = () => this.comments;
+export default class FilmsModel {
+  #films = Array.from({ length: FILMS_MAX_LENGTH }, generateFilm);
+  #comments = Array.from({ length: COMMENTS_MAX_LENGTH }, generateComment);
+
+  get films() {
+    return this.#films;
+  }
+
+  get comments() {
+    return this.#comments;
+  }
 }

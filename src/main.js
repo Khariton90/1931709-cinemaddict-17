@@ -5,10 +5,10 @@ import RatingView from './view/rating-view';
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = document.querySelector('.header');
-const boardPresenter = new BoardPresenter();
 
 const filmsModel = new FilmsModel();
+const boardPresenter = new BoardPresenter(siteMainElement, filmsModel);
 
 render(new RatingView(), siteHeaderElement);
 
-boardPresenter.init(siteMainElement, filmsModel);
+boardPresenter.init();
