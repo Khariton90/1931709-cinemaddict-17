@@ -49,6 +49,8 @@ const films = [
   }
 ];
 
+let filmId = 1;
+
 const generateFilm = () => {
   const randomIndex = getRandomInteger(0, films.length);
 
@@ -61,7 +63,7 @@ const generateFilm = () => {
   };
 
   return ({
-    id: 1,
+    id: filmId++,
     comments: [1, 2, 3, 4, 5],
     filmInfo: {
       title: films[randomIndex].title.replaceAll('-', ' '),

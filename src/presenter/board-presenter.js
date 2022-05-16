@@ -1,4 +1,3 @@
-import { render } from '../render';
 import FilmCardView from '../view/film-card-view';
 import FilmsListContainerView from '../view/films-list-container-view';
 import FilterView from '../view/filter-view';
@@ -6,9 +5,10 @@ import ShowMoreBtnView from '../view/show-more-btn-view';
 import FilmDetailsPopupView from '../view/film-details-popup-view';
 import FilmDetailsTopView from '../view/film-details/film-details-top-view';
 import FilmDetailsBottomView from '../view/film-details/film-details-bottom-view';
-import { CommentView } from '../view/film-details/comment-view';
 import { CARDS_VIEW_STEPS } from '../consts';
 import ListEmptyView from '../view/list-empty-view';
+import { remove, render } from '../framework/render';
+import FilmDetailInnerView from '../view/film-details/film-details-inner-view';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -16,7 +16,17 @@ export default class BoardPresenter {
   #boardComponent = new FilmsListContainerView();
   #popupComponent = new FilmDetailsPopupView();
   #renderedCardsViewCount = CARDS_VIEW_STEPS;
+  #formDetailInnerComponent = new FilmDetailInnerView();
   #showMoreBtnComponent = new ShowMoreBtnView();
+  _popup = false;
+
+  get popup() {
+    return this._popup;
+  }
+
+  set popup(value) {
+    this._popup = value;
+  }
 
   constructor(boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
@@ -34,30 +44,27 @@ export default class BoardPresenter {
     render(new FilterView(), this.#boardContainer);
     render(this.#boardComponent, this.#boardContainer);
 
-    if (this.boardsFilms.length === 0) {
+    if (!this.boardsFilms.length) {
       render(new ListEmptyView(), this.#boardContainer);
     } else {
       for (let i = 0; i < Math.min(this.boardsFilms.length, CARDS_VIEW_STEPS); i++) {
         this.#renderCards(this.boardsFilms[i]);
-        this.#showMoreBtnComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
+        this.#showMoreBtnComponent.setClickHandler(this.#handleLoadMoreButtonClick);
       }
 
       render(this.#showMoreBtnComponent, this.#boardContainer);
     }
   };
 
-  #handleLoadMoreButtonClick = (evt) => {
-    evt.preventDefault();
-
+  #handleLoadMoreButtonClick = () => {
     this.boardsFilms
-      .slice(this.#renderedCardsViewCount, this.#renderedCardsViewCount + 5)
+      .slice(this.#renderedCardsViewCount, this.#renderedCardsViewCount + CARDS_VIEW_STEPS)
       .forEach((film) => this.#renderCards(film));
 
     this.#renderedCardsViewCount += CARDS_VIEW_STEPS;
 
     if (this.#renderedCardsViewCount >= this.boardsFilms.length) {
-      this.#showMoreBtnComponent.element.remove();
-      this.#showMoreBtnComponent.removeElement();
+      remove(this.#showMoreBtnComponent);
     }
   };
 
@@ -65,43 +72,38 @@ export default class BoardPresenter {
     const filmCardComponent = new FilmCardView(card);
     render(filmCardComponent, this.#boardComponent.element);
 
-    filmCardComponent.element.addEventListener('click', () => {
-      if (document.body.classList.contains('hide-overflow')) {
+    filmCardComponent.setClickHandler(() => {
+      if (this.popup) {
         this.#removePopup();
-        this.#renderPopup(card);
-      } else {
-        this.#renderPopup(card);
       }
-    });
-  };
 
-  #onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.#removePopup();
-    }
+      this.#renderPopup(card);
+    });
   };
 
   #renderPopup = (film) => {
-    document.addEventListener('keydown', this.#onEscKeyDown);
+    const { comments } = film;
 
+    this.popup = true;
     render(this.#popupComponent, document.body);
-    render(new FilmDetailsTopView(film), document.querySelector('.film-details__inner'));
-    render(new FilmDetailsBottomView(film), document.querySelector('.film-details__inner'));
+    render(this.#formDetailInnerComponent, this.#popupComponent.element);
+    render(new FilmDetailsTopView(film), this.#formDetailInnerComponent.element);
+    this.#renderFilmComments(comments);
 
-    const filteredComments = this.boardComments.filter((comment) => film.comments.includes(comment.id));
-    filteredComments.forEach((el) => render(new CommentView(el), document.querySelector('.film-details__comments-list')));
+    this.#popupComponent.setKeyDownHandler(this.#removePopup);
+    this.#popupComponent.setClickHandler(this.#removePopup);
+  };
 
-    document.body.classList.add('hide-overflow');
-    this.#popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      this.#removePopup();
-    });
+  #renderFilmComments = (comments) => {
+    const filteredComments = this.boardComments.filter((comment) => comments.includes(comment.id));
+    const filmDetailBottomContainer = new FilmDetailsBottomView(filteredComments);
+
+    render(filmDetailBottomContainer, this.#formDetailInnerComponent.element);
   };
 
   #removePopup = () => {
-    document.body.querySelector('.film-details').remove();
-    document.body.classList.remove('hide-overflow');
-    this.#popupComponent.removeElement();
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+    this.popup = false;
+    remove(this.#popupComponent);
+    remove(this.#formDetailInnerComponent);
   };
 }
