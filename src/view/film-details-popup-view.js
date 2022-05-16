@@ -1,9 +1,7 @@
 import AbstractView from '../framework/view/abstract-view';
 
 const createFilmDetailsPopupTemplate = () => (
-  `<section class="film-details">
-
-  </section>`
+  '<section class="film-details"></section>'
 );
 
 export default class FilmDetailsPopupView extends AbstractView {
@@ -24,9 +22,9 @@ export default class FilmDetailsPopupView extends AbstractView {
   }
 
   #keyDownHandler = (evt) => {
-    evt.preventDefault();
-
     if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+
       this._callback.keydown();
 
       document.body.classList.remove('hide-overflow');

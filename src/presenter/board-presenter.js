@@ -44,7 +44,7 @@ export default class BoardPresenter {
     render(new FilterView(), this.#boardContainer);
     render(this.#boardComponent, this.#boardContainer);
 
-    if (this.boardsFilms.length === 0) {
+    if (!this.boardsFilms.length) {
       render(new ListEmptyView(), this.#boardContainer);
     } else {
       for (let i = 0; i < Math.min(this.boardsFilms.length, CARDS_VIEW_STEPS); i++) {
@@ -73,11 +73,10 @@ export default class BoardPresenter {
     render(filmCardComponent, this.#boardComponent.element);
 
     filmCardComponent.setClickHandler(() => {
-      if (!this.popup) {
-        return this.#renderPopup(card);
+      if (this.popup) {
+        this.#removePopup();
       }
 
-      this.#removePopup();
       this.#renderPopup(card);
     });
   };
