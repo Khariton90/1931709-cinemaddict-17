@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 const createRatingTemplate = () => (
   `<section class="header__profile profile">
@@ -8,21 +8,8 @@ const createRatingTemplate = () => (
 );
 
 
-export default class RatingView {
-  #element = null;
-
+export default class RatingView extends AbstractView {
   get template() {
     return createRatingTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

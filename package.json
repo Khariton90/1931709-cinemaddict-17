@@ -30,6 +30,8 @@
     "node": "16"
   },
   "dependencies": {
-    "dayjs": "1.11.1"
+    "css-loader": "6.7.1",
+    "dayjs": "1.11.1",
+    "style-loader": "3.3.1"
   }
 }

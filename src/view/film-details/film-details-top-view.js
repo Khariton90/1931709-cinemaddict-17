@@ -1,4 +1,4 @@
-import { createElement } from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 
 const createFilmDetailsTopView = (film) => {
   const { filmInfo } = film;
@@ -87,26 +87,14 @@ const createFilmDetailsTopView = (film) => {
   );
 };
 
-export default class FilmDetailTopView {
-  #element = null;
-
+export default class FilmDetailTopView extends AbstractView {
   constructor(film) {
+    super();
     this.film = film;
   }
 
   get template() {
     return createFilmDetailsTopView(this.film);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 
