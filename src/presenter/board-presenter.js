@@ -18,6 +18,15 @@ export default class BoardPresenter {
   #renderedCardsViewCount = CARDS_VIEW_STEPS;
   #formDetailInnerComponent = new FilmDetailInnerView();
   #showMoreBtnComponent = new ShowMoreBtnView();
+  _popup = false;
+
+  get popup() {
+    return this._popup;
+  }
+
+  set popup(value) {
+    this._popup = value;
+  }
 
   constructor(boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
@@ -63,12 +72,20 @@ export default class BoardPresenter {
     const filmCardComponent = new FilmCardView(card);
     render(filmCardComponent, this.#boardComponent.element);
 
-    filmCardComponent.setClickHandler(() => this.#renderPopup(card));
+    filmCardComponent.setClickHandler(() => {
+      if (!this.popup) {
+        return this.#renderPopup(card);
+      }
+
+      this.#removePopup();
+      this.#renderPopup(card);
+    });
   };
 
   #renderPopup = (film) => {
     const { comments } = film;
 
+    this.popup = true;
     render(this.#popupComponent, document.body);
     render(this.#formDetailInnerComponent, this.#popupComponent.element);
     render(new FilmDetailsTopView(film), this.#formDetailInnerComponent.element);
@@ -86,6 +103,7 @@ export default class BoardPresenter {
   };
 
   #removePopup = () => {
+    this.popup = false;
     remove(this.#popupComponent);
     remove(this.#formDetailInnerComponent);
   };
