@@ -1,6 +1,6 @@
 import FilmCardView from '../view/film-card-view';
 import FilmsListContainerView from '../view/films-list-container-view';
-import FilterView from '../view/filter-view';
+import SortView from '../view/sort-view';
 import ShowMoreBtnView from '../view/show-more-btn-view';
 import FilmDetailsPopupView from '../view/film-details-popup-view';
 import FilmDetailsTopView from '../view/film-details/film-details-top-view';
@@ -41,7 +41,7 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
-    render(new FilterView(), this.#boardContainer);
+    render(new SortView(), this.#boardContainer);
     render(this.#boardComponent, this.#boardContainer);
 
     if (!this.boardsFilms.length) {

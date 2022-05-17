@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER } from './consts';
+import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, FilterTypes } from './consts';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -25,4 +25,11 @@ const getHumanizeTime = (time) => {
   return currentTime;
 };
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear };
+const filter = {
+  [FilterTypes.ALL]: (films) => films,
+  [FilterTypes.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
+  [FilterTypes.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
+  [FilterTypes.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist)
+};
+
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter };
