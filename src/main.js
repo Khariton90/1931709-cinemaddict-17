@@ -12,9 +12,10 @@ const siteHeaderElement = document.querySelector('.header');
 const filmsModel = new FilmsModel();
 const filter = generateFilter(filmsModel.films);
 
-render(new FilterView(filter), siteMainElement);
 
+render(new FilterView(filter), siteMainElement);
 const boardPresenter = new BoardPresenter(siteMainElement, filmsModel);
+
 render(new RatingView(), siteHeaderElement);
 
 boardPresenter.init();

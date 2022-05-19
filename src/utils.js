@@ -25,11 +25,21 @@ const getHumanizeTime = (time) => {
   return currentTime;
 };
 
-const filter = {
+const getFilter = () => ({
   [FilterTypes.ALL]: (films) => films,
   [FilterTypes.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
   [FilterTypes.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
   [FilterTypes.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist)
+});
+
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [...items.slice(0, index),update,...items.slice(index + 1)];
 };
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter };
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, getFilter, updateItem };

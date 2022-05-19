@@ -1,4 +1,6 @@
-import { filter } from '../utils';
+import { getFilter } from '../utils';
+
+const filter = getFilter();
 
 const generateLink = (name) => `#${name.toLowerCase().replace('movies', '').trim()}`;
 
