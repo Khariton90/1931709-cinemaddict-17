@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { getRandomInteger, getHumanizeTime, getHumanizeDate } from '../utils';
 
 const films = [
@@ -49,8 +50,6 @@ const films = [
   }
 ];
 
-let filmId = 1;
-
 const generateFilm = () => {
   const randomIndex = getRandomInteger(0, films.length);
 
@@ -63,7 +62,7 @@ const generateFilm = () => {
   };
 
   return ({
-    id: filmId++,
+    id: nanoid(),
     comments: [1, 2, 3, 4, 5],
     filmInfo: {
       title: films[randomIndex].title.replaceAll('-', ' '),
