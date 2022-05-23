@@ -1,21 +1,22 @@
 import FilmsListContainerView from '../view/films-list-container-view';
 import SortView from '../view/sort-view';
 import ShowMoreBtnView from '../view/show-more-btn-view';
-import { CARDS_VIEW_STEPS } from '../consts';
+import { CARDS_VIEW_STEPS, SortType } from '../consts';
 import ListEmptyView from '../view/list-empty-view';
 import { remove, render } from '../framework/render';
 import FilmPresenter from './film-presenter';
-import { updateItem } from '../utils';
+import { sortCardDate, sortCardRating, updateItem } from '../utils';
 
 export default class BoardPresenter {
   #renderedFilmCardsCount = CARDS_VIEW_STEPS;
   #filmsModel = null;
-
   #boardContainer = null;
   #boardComponent = new FilmsListContainerView();
   #showMoreBtnComponent = new ShowMoreBtnView();
   #listEmptyComponent = new ListEmptyView();
   #sortComponent = new SortView();
+  #currentSortType =  SortType.DEFAULT;
+  #sourceBoardCards = [];
 
   #boardFilms = [];
   #boardComments = [];
@@ -31,10 +32,41 @@ export default class BoardPresenter {
     this.#boardFilms = [...this.#filmsModel.films];
     this.#boardComments = [...this.#filmsModel.comments];
 
+    this.#sourceBoardCards = [...this.#filmsModel.films];
+
     this.#renderBoard();
   };
 
-  #renderSort = () => render(this.#sortComponent, this.#boardContainer);
+  #sortCards = (sortType) => {
+    switch (sortType) {
+      case SortType.DATE:
+        this.#boardFilms.sort(sortCardDate);
+        break;
+      case SortType.RATING:
+
+        this.#boardFilms.sort(sortCardRating);
+        break;
+      default:
+        this.#boardFilms = [...this.#sourceBoardCards];
+    }
+
+    this.#currentSortType = sortType;
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortCards(sortType);
+    this.#clearFilmListPresenter();
+    this.#renderBoard();
+  };
+
+  #renderSort = () => {
+    render(this.#sortComponent, this.#boardContainer);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange, this.#currentSortType);
+  };
 
   #renderListEmpty = () => render(this.#listEmptyComponent, this.#boardContainer);
 
@@ -55,6 +87,7 @@ export default class BoardPresenter {
 
   #handleCardChange = (updatedCard) => {
     this.#boardFilms = updateItem(this.#boardFilms, updatedCard);
+    this.#sourceBoardCards = updateItem(this.#sourceBoardCards, updatedCard);
     this.#filmPresenter.get(updatedCard.id).init(updatedCard);
   };
 

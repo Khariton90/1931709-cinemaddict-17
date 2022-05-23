@@ -13,5 +13,10 @@ const FilterTypes = {
   WATCHLIST: 'Watchlist',
 };
 
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating'
+};
 
-export { EMOTIONS, AUTHORS, LAST_FOUR_DIGITS_OF_YEAR, FORMAT_DATE, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, CARDS_VIEW_STEPS, FilterTypes };
+export { EMOTIONS, AUTHORS, LAST_FOUR_DIGITS_OF_YEAR, FORMAT_DATE, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, CARDS_VIEW_STEPS, FilterTypes, SortType };
