@@ -1,8 +1,9 @@
 import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
 const createFilmDetailsPopupTemplate = (film, comments) => {
-
-  const { filmInfo, userDetails } = film;
+  console.log(film)
+  const { filmInfo, userDetails, filteredComments } = film;
   const {
     title,
     alternativeTitle,
@@ -23,7 +24,7 @@ const createFilmDetailsPopupTemplate = (film, comments) => {
   const titleGenre = genre.length > 1 ? 'Genres' : 'Genre';
 
 
-  const commentsTemplate = comments.map((popupComment) => {
+  const commentsTemplate = filteredComments.map((popupComment) => {
     const { emotion, comment, author, date } = popupComment;
 
     return (
@@ -41,6 +42,7 @@ const createFilmDetailsPopupTemplate = (film, comments) => {
     </div>
   </li>`);
   });
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -110,7 +112,7 @@ const createFilmDetailsPopupTemplate = (film, comments) => {
   </div>
   <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filteredComments.length}</span></h3>
           <ul class="film-details__comments-list">
             ${commentsTemplate.join('')}
            </ul>
@@ -147,21 +149,24 @@ const createFilmDetailsPopupTemplate = (film, comments) => {
     </div>
   </form>
   </section>`
-  );};
+  );
+};
 
-export default class FilmDetailsPopupView extends AbstractView {
-  #film = null;
-  #comments = null;
-
+export default class FilmDetailsPopupView extends AbstractStatefulView {
   get template() {
-    return createFilmDetailsPopupTemplate(this.#film, this.#comments);
+    return createFilmDetailsPopupTemplate(this._state);
   }
 
   constructor(film, comments) {
     super();
-    this.#film = film;
-    this.#comments = comments;
+    this._state = FilmDetailsPopupView.stateToFilm(film, comments);
+
   }
+
+  static stateToFilm = (film, comments) => ({
+    ...film,
+    filteredComments: [...comments]
+  });
 
   setClickHandler(callback) {
     this._callback.click = callback;
