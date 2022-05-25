@@ -1,6 +1,8 @@
 import FilmCardView from '../view/film-card-view';
-import FilmDetailsPopupView from '../view/film-details-popup-view';
-import { remove, render, replace } from '../framework/render';
+import { remove, render, RenderPosition, replace } from '../framework/render';
+import PopupContainerView from '../view/popup/popup-container-view';
+import PopupTopContainerView from '../view/popup/popup-top-container-view';
+import PopupBottomContainerView from '../view/popup/popup-bottom-container-view';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -11,6 +13,8 @@ export default class FilmPresenter {
   #filmListContainer = null;
   #filmComponent = null;
   #popupComponent = null;
+  #popupTopContainerComponent = null;
+  #popupBottomContainerComponent = null;
 
   #card = null;
   #filmComments = null;
@@ -31,10 +35,10 @@ export default class FilmPresenter {
     const prevFilmComponent = this.#filmComponent;
     const prevPopupComponent = this.#popupComponent;
 
-    const filteredComments = this.#filmComments.filter((comment) => this.#card.comments.includes(comment.id));
-
     this.#filmComponent = new FilmCardView(card);
-    this.#popupComponent = new FilmDetailsPopupView(card, filteredComments);
+    this.#popupComponent = new PopupContainerView();
+    this.#popupTopContainerComponent = new PopupTopContainerView(card);
+    this.#popupBottomContainerComponent = new PopupBottomContainerView(card, this.#filmComments);
 
     this.#filmComponent.setHandleWatchlistClick(this.#handleWatchlistClick);
     this.#filmComponent.setHandleAlreadyWatchedClick(this.#handleAlreadyWatchedClick);
@@ -61,7 +65,6 @@ export default class FilmPresenter {
 
     remove(prevPopupComponent);
     remove(prevFilmComponent);
-
   };
 
   destroy = () => {
@@ -86,13 +89,16 @@ export default class FilmPresenter {
     this.#changeMode();
 
     this.#mode = Mode.OPEN;
-    render(this.#popupComponent, document.body);
+    render(this.#popupComponent, this.#filmListContainer, RenderPosition.AFTEREND);
+    render(this.#popupTopContainerComponent, this.#popupComponent.element);
+    render(this.#popupBottomContainerComponent, this.#popupComponent.element);
 
     this.#popupComponent.setKeyDownHandler(this.#removePopup);
     this.#popupComponent.setClickHandler(this.#removePopup);
-    this.#popupComponent.setHandleWatchlistClick(this.#handleWatchlistClick);
-    this.#popupComponent.setHandleAlreadyWatchedClick(this.#handleAlreadyWatchedClick);
-    this.#popupComponent.setHandleFavoritesClick(this.#handleFavoritesClick);
+
+    this.#popupTopContainerComponent.setHandleWatchlistClick(this.#handleWatchlistClick);
+    this.#popupTopContainerComponent.setHandleAlreadyWatchedClick(this.#handleAlreadyWatchedClick);
+    this.#popupTopContainerComponent.setHandleFavoritesClick(this.#handleFavoritesClick);
 
   };
 

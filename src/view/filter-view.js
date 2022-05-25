@@ -14,7 +14,8 @@ const createFilterViewTemplate = (filters) => {
 
   return (
     `<nav class="main-navigation">${filterLinksTemplate}</nav>`
-  );};
+  );
+};
 
 export default class FilterView extends AbstractView {
   #filters = null;
