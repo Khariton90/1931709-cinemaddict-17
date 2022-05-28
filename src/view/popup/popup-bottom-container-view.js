@@ -1,8 +1,8 @@
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import { getHumanizeDate } from '../../utils';
 
 const createPopupBottomContainerViewTemplate = (film) => {
   const { filteredComments, commentEmotion } = film;
-
 
   const commentsTemplate = filteredComments.map((popupComment) => {
     const { emotion, comment, author, date } = popupComment;
@@ -16,7 +16,7 @@ const createPopupBottomContainerViewTemplate = (film) => {
         <p class="film-details__comment-text">${comment}</p>
         <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${date}</span>
+        <span class="film-details__comment-day">${getHumanizeDate(date)}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -24,7 +24,6 @@ const createPopupBottomContainerViewTemplate = (film) => {
   }).join('');
 
   const emojis = ['smile','sleeping','puke','angry'];
-
   const emojiListTemplate = emojis.map((emoji) => {
     const checked = emoji === commentEmotion ? 'checked' : '';
 

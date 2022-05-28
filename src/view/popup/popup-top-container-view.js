@@ -1,4 +1,5 @@
 import AbstractView from '../../framework/view/abstract-view';
+import { getHumanizeDate, getHumanizeTime } from '../../utils';
 
 const createPopupTopContainerViewTemplate = (film) => {
   const { filmInfo, userDetails } = film;
@@ -60,11 +61,11 @@ const createPopupTopContainerViewTemplate = (film) => {
     </tr>
     <tr class="film-details__row">
       <td class="film-details__term">Release Date</td>
-      <td class="film-details__cell">${release.date}</td>
+      <td class="film-details__cell">${getHumanizeDate(release.date)}</td>
     </tr>
     <tr class="film-details__row">
       <td class="film-details__term">Runtime</td>
-      <td class="film-details__cell">${runtime}</td>
+      <td class="film-details__cell">${getHumanizeTime(runtime)}</td>
     </tr>
       <tr class="film-details__row">
         <td class="film-details__term">Country</td>
