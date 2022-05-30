@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { getHumanizeYear } from '../utils';
+import { getHumanizeYear, getHumanizeTime, getHumanizeDate } from '../utils';
 
 const createFilmCardTemplate = (film = {}) => {
   const { comments, filmInfo, userDetails } = film;
@@ -13,9 +13,8 @@ const createFilmCardTemplate = (film = {}) => {
     release
   } = filmInfo;
 
-  const {watchlist, alreadyWatched, favorite} = userDetails;
-
-  const year = getHumanizeYear(release.date);
+  const { watchlist, alreadyWatched, favorite } = userDetails;
+  const date = getHumanizeDate(release.date);
 
   return (
     `<article class="film-card">
@@ -23,8 +22,8 @@ const createFilmCardTemplate = (film = {}) => {
         <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${year}</span>
-        <span class="film-card__duration">${runtime}</span>
+        <span class="film-card__year">${getHumanizeYear(date)}</span>
+        <span class="film-card__duration">${getHumanizeTime(runtime)}</span>
         <span class="film-card__genre">${genre}</span>
       </p>
     <img src="${poster}" alt="" class="film-card__poster">

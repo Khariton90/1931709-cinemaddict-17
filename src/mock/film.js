@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { getRandomInteger, getHumanizeTime, getHumanizeDate } from '../utils';
+import { getRandomInteger } from '../utils';
 
 const films = [
   {
@@ -88,10 +88,10 @@ const generateFilm = () => {
         'Morgan Freeman'
       ],
       release: {
-        date: getHumanizeDate(films[randomIndex].date),
+        date: films[randomIndex].date,
         releaseCountry: 'Finland'
       },
-      runtime: getHumanizeTime(77),
+      runtime: 77,
       genre: [
         'Comedy'
       ],
