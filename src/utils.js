@@ -25,12 +25,12 @@ const getHumanizeTime = (time) => {
   return currentTime;
 };
 
-const getFilter = () => ({
+const filter = {
   [FilterTypes.ALL]: (films) => films,
   [FilterTypes.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
   [FilterTypes.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
   [FilterTypes.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist)
-});
+};
 
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
@@ -69,4 +69,4 @@ const sortCardDate = (cardA, cardB) => {
 };
 
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, getFilter, updateItem, sortCardDate, sortCardRating };
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating };
