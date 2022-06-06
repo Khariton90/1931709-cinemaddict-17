@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
 import { getHumanizeYear, getHumanizeTime, getHumanizeDate } from '../utils';
 
-const createFilmCardTemplate = (film = {}) => {
-  const { comments, filmInfo, userDetails } = film;
+const createFilmCardTemplate = (film = {}, length) => {
+  const { filmInfo, userDetails } = film;
   const {
     title,
     totalRating,
@@ -28,7 +28,7 @@ const createFilmCardTemplate = (film = {}) => {
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
           <p class="film-card__description">${description}</p>
-          <span class="film-card__comments">${comments.length} comments</span>
+          <span class="film-card__comments">${length} comments</span>
       </a>
       <div class="film-card__controls">
         <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist ? 'film-card__controls-item--active' : ''}" type="button">Add to watchlist</button>
@@ -41,14 +41,19 @@ const createFilmCardTemplate = (film = {}) => {
 
 
 export default class FilmCardView extends AbstractView {
-  constructor(film) {
-    super();
-    this.film = film;
-  }
+  #film = null;
+  #commentsLength = null;
 
   get template() {
-    return createFilmCardTemplate(this.film);
+    return createFilmCardTemplate(this.#film, this.#commentsLength);
   }
+
+  constructor(film, length) {
+    super();
+    this.#film = film;
+    this.#commentsLength = length;
+  }
+
 
   setClickHandler(callback) {
     this._callback.click = callback;

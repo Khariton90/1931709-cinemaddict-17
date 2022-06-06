@@ -3,15 +3,9 @@ import { remove, render, replace } from '../framework/render';
 import PopupContainerView from '../view/popup/popup-container-view';
 import PopupTopContainerView from '../view/popup/popup-top-container-view';
 import PopupBottomContainerView from '../view/popup/popup-bottom-container-view';
-import { UpdateType, UserAction } from '../consts';
+import { Mode, UpdateType, UserAction } from '../consts';
 import CommentView from '../view/popup/comment-view';
 import NewCommentView from '../view/popup/new-comment-view';
-
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  OPEN: 'OPEN'
-};
 
 export default class FilmPresenter {
   #filmListContainer = null;
@@ -19,36 +13,35 @@ export default class FilmPresenter {
   #popupComponent = null;
   #popupTopContainerComponent = null;
   #popupBottomContainerComponent = null;
+  #newCommentComponent = null;
 
   #card = null;
-  #filmComments = null;
+  #commentsModel = null;
   #changeData = null;
   #mode = Mode.DEFAULT;
   #changeMode = null;
 
-  constructor(filmListContainer, filmComments, changeData, changeMode) {
+  constructor(filmListContainer, commentsModel, changeData, changeMode) {
     this.#filmListContainer = filmListContainer;
-    this.#filmComments = filmComments;
+    this.#commentsModel = commentsModel;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
   }
 
+  get comments() {
+    return [...this.#commentsModel.comments].filter((comment) => this.#card.comments.includes(comment.id));
+  }
+
   init = (card) => {
     this.#card = card;
-
     const prevFilmComponent = this.#filmComponent;
     const prevPopupComponent = this.#popupComponent;
-
-    this.#filmComponent = new FilmCardView(card);
-    this.#popupComponent = new PopupContainerView();
-    this.#popupTopContainerComponent = new PopupTopContainerView(card);
-    this.#popupBottomContainerComponent = new PopupBottomContainerView(this.#filmComments.length);
+    this.#filmComponent = new FilmCardView(this.#card, this.comments.length);
 
     this.#filmComponent.setHandleWatchlistClick(this.#handleWatchlistClick);
     this.#filmComponent.setHandleAlreadyWatchedClick(this.#handleAlreadyWatchedClick);
     this.#filmComponent.setHandleFavoritesClick(this.#handleFavoritesClick);
-
-    this.#filmComponent.setClickHandler(this.#renderPopup);
+    this.#filmComponent.setClickHandler(this.renderPopup);
 
     if (prevFilmComponent === null || prevPopupComponent === null) {
       render(this.#filmComponent, this.#filmListContainer);
@@ -59,8 +52,9 @@ export default class FilmPresenter {
       replace(this.#filmComponent, prevFilmComponent);
     }
 
+
     if (this.#mode === Mode.OPEN) {
-      this.#renderPopup();
+      this.renderPopup();
     }
 
     if (this.#mode === Mode.DEFAULT) {
@@ -79,6 +73,8 @@ export default class FilmPresenter {
   resetPopup = () => {
     if (this.#mode !== Mode.DEFAULT) {
       remove(this.#popupComponent);
+      remove(this.#popupBottomContainerComponent);
+      remove(this.#popupTopContainerComponent);
       this.#mode = Mode.DEFAULT;
     }
 
@@ -86,17 +82,19 @@ export default class FilmPresenter {
 
   #removePopup = () => {
     remove(this.#popupComponent);
-
-    this.#mode = Mode.DEFAULT;
-
     remove(this.#popupBottomContainerComponent);
+    this.#mode = Mode.DEFAULT;
   };
 
-  #renderPopup = () => {
+  renderPopup = () => {
     this.#changeMode();
     this.#mode = Mode.OPEN;
 
+    this.#popupComponent = new PopupContainerView();
     render(this.#popupComponent, this.#filmListContainer);
+
+    this.#popupTopContainerComponent = new PopupTopContainerView(this.#card);
+    this.#popupBottomContainerComponent = new PopupBottomContainerView(this.comments.length);
     render(this.#popupTopContainerComponent, this.#popupComponent.element.querySelector('.film-details__inner'));
     render(this.#popupBottomContainerComponent, this.#popupComponent.element.querySelector('.film-details__inner'));
 
@@ -108,52 +106,61 @@ export default class FilmPresenter {
     this.#popupTopContainerComponent.setHandleFavoritesClick(this.#handleFavoritesClick);
 
     this.#renderCommentsList();
-
     this.#renderNewCommentComponent();
   };
 
   #renderCommentsList = () => {
-    this.#filmComments.forEach((comment) => this.#renderComment(comment));
+    this.comments.forEach((comment) => this.#renderComment(comment));
   };
 
   #renderComment = (comment) => {
     const commentComponent = new CommentView(comment);
     render(commentComponent, this.#popupBottomContainerComponent.element.querySelector('.film-details__comments-list'));
+    commentComponent.setHandleDeleteCommentClick(this.#handleDeleteCommentClick);
   };
 
   #renderNewCommentComponent = () => {
-    const newCommentComponent = new NewCommentView();
-    render(newCommentComponent, this.#popupBottomContainerComponent.element);
+    this.#newCommentComponent = new NewCommentView();
+    render(this.#newCommentComponent, this.#popupBottomContainerComponent.element);
 
-    newCommentComponent.setHandleAddCommentKeyPress(this.#handleAddCommentKeyPress);
+    this.#newCommentComponent.setHandleAddCommentKeyPress(this.#handleAddCommentKeyPress);
   };
 
   #handleWatchlistClick = () => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      UpdateType.PATCH,
-      {...this.#card, userDetails: {...this.#card.userDetails, watchlist: !this.#card.userDetails.watchlist}});
+      UpdateType.MINOR,
+      {...{...this.#card, userDetails: {...this.#card.userDetails, watchlist: !this.#card.userDetails.watchlist}}, mode: this.#mode});
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      UpdateType.PATCH,
-      {...this.#card, userDetails: {...this.#card.userDetails, alreadyWatched: !this.#card.userDetails.alreadyWatched}});
+      UpdateType.MINOR,
+      {...{...this.#card, userDetails: {...this.#card.userDetails, alreadyWatched: !this.#card.userDetails.alreadyWatched}}, mode: this.#mode});
   };
 
   #handleFavoritesClick = () => {
     this.#changeData(
       UserAction.UPDATE_CARD,
-      UpdateType.PATCH,
-      {...this.#card, userDetails: {...this.#card.userDetails, favorite: !this.#card.userDetails.favorite}});
+      UpdateType.MINOR,
+      {...{...this.#card, userDetails: {...this.#card.userDetails, favorite: !this.#card.userDetails.favorite}}, mode: this.#mode});
   };
 
   #handleAddCommentKeyPress = (comment) => {
     this.#changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      comment
+      { card: {...this.#card, comments: [...this.#card.comments, comment.id]}, comment: comment }
+    );
+  };
+
+  #handleDeleteCommentClick = (comment) => {
+    const comments = this.#card.comments.filter((item) => item !== comment);
+    this.#changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      { card: {...this.#card, comments: [...comments]}, comments: {id: comment} }
     );
   };
 }

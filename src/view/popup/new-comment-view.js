@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import he from 'he';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
 const createNewCommentTemplate = (state) => {
@@ -61,9 +62,10 @@ export default class NewCommentView extends AbstractStatefulView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#setCommentEmojiHandler);
-    this.element.scrollTo({top: this.element.scrollHeight});
-    this.element.addEventListener('keypress', this.#handleAddComment);
+    this.element.querySelector('.film-details__comment-input').value = this._state.comment;
+    this.element.addEventListener('keydown', this.#handleAddComment);
   };
+
 
   #setCommentEmojiHandler = (evt) => {
     if (evt.target.tagName !== 'IMG') {
@@ -75,6 +77,7 @@ export default class NewCommentView extends AbstractStatefulView {
 
     this.updateElement({
       emotion: this.element.querySelector(fieldId).value,
+      comment: this.element.querySelector('.film-details__comment-input').value,
     });
   };
 
@@ -89,11 +92,11 @@ export default class NewCommentView extends AbstractStatefulView {
 
       this.updateElement({
         id: nanoid(),
-        comment: this.element.querySelector('.film-details__comment-input').value,
+        comment: he.encode(this.element.querySelector('.film-details__comment-input').value),
       });
 
       const state = NewCommentView.filmToState(this._state);
-      return state;
+      this._callback.addCommentKeyPress(state);
     }
 
   };
