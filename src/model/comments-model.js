@@ -1,15 +1,7 @@
 import Observable from '../framework/observable';
 
 export default class CommentsModel extends Observable {
-  #comments = [
-    {
-      id: null,
-      author: null,
-      comment: null,
-      date: null,
-      emotion: null
-    },
-  ];
+  #comments = [];
 
   get comments() {
     return this.#comments;

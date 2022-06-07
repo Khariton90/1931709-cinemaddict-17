@@ -130,28 +130,49 @@ export default class FilmPresenter {
     this.#changeData(
       UserAction.UPDATE_CARD,
       UpdateType.MINOR,
-      {...{...this.#card, userDetails: {...this.#card.userDetails, watchlist: !this.#card.userDetails.watchlist}}, mode: this.#mode});
+      {
+        ...{
+          ...this.#card,
+          userDetails: {...this.#card.userDetails, watchlist: !this.#card.userDetails.watchlist}
+        },
+        mode: this.#mode
+      });
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#changeData(
       UserAction.UPDATE_CARD,
       UpdateType.MINOR,
-      {...{...this.#card, userDetails: {...this.#card.userDetails, alreadyWatched: !this.#card.userDetails.alreadyWatched}}, mode: this.#mode});
+      {
+        ...{
+          ...this.#card,
+          userDetails: {...this.#card.userDetails, alreadyWatched: !this.#card.userDetails.alreadyWatched}
+        },
+        mode: this.#mode
+      });
   };
 
   #handleFavoritesClick = () => {
     this.#changeData(
       UserAction.UPDATE_CARD,
       UpdateType.MINOR,
-      {...{...this.#card, userDetails: {...this.#card.userDetails, favorite: !this.#card.userDetails.favorite}}, mode: this.#mode});
+      {
+        ...{
+          ...this.#card,
+          userDetails: {...this.#card.userDetails, favorite: !this.#card.userDetails.favorite}
+        },
+        mode: this.#mode
+      });
   };
 
   #handleAddCommentKeyPress = (comment) => {
     this.#changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      { card: {...this.#card, comments: [...this.#card.comments, comment.id]}, comment: comment }
+      {
+        card: {...this.#card, comments: [...this.#card.comments, comment.id]},
+        comment: comment
+      }
     );
   };
 
@@ -160,7 +181,10 @@ export default class FilmPresenter {
     this.#changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      { card: {...this.#card, comments: [...comments]}, comments: {id: comment} }
+      {
+        card: {...this.#card, comments: [...comments]},
+        comments: {id: comment}
+      }
     );
   };
 }

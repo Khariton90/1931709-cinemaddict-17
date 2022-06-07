@@ -18,7 +18,7 @@ export default class BoardPresenter {
   #filterModel = null;
   #listEmptyComponent = null;
   #commentsModel = null;
-  #filmPresenter = new Map();
+  #filmPresenterList = new Map();
 
 
   constructor(boardContainer, filmsModel, filterModel, commentsModel) {
@@ -48,7 +48,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmPresenter.get(data.card.id).init(data.card);
+        this.#filmPresenterList.get(data.card.id).init(data.card);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -120,7 +120,7 @@ export default class BoardPresenter {
   };
 
   #handleModeChange = () => {
-    this.#filmPresenter.forEach((presenter) => presenter.resetPopup());
+    this.#filmPresenterList.forEach((presenter) => presenter.resetPopup());
   };
 
   #renderCards = (films) => {
@@ -130,14 +130,14 @@ export default class BoardPresenter {
   #renderCard = (card) => {
     const filmPresenter = new FilmPresenter(this.#boardComponent.element, this.#commentsModel, this.#handleViewAction, this.#handleModeChange);
     filmPresenter.init(card);
-    this.#filmPresenter.set(card.id, filmPresenter);
+    this.#filmPresenterList.set(card.id, filmPresenter);
   };
 
   #clearBoard = ({resetRenderedCardCount = false, resetSortType = false} = {}) => {
     const cardCount = this.films.length;
 
-    this.#filmPresenter.forEach((presenter) => presenter.destroy());
-    this.#filmPresenter.clear();
+    this.#filmPresenterList.forEach((presenter) => presenter.destroy());
+    this.#filmPresenterList.clear();
 
     remove(this.#sortComponent);
     remove(this.#listEmptyComponent);
@@ -146,7 +146,6 @@ export default class BoardPresenter {
     if (resetRenderedCardCount) {
       this.#renderedFilmCardsCount = CARDS_VIEW_STEPS;
     } else {
-
       this.#renderedFilmCardsCount = Math.min(cardCount, this.#renderedFilmCardsCount);
     }
 
@@ -170,7 +169,7 @@ export default class BoardPresenter {
     this.#renderShowMoreBtn();
 
     if (data.mode === Mode.OPEN) {
-      this.#filmPresenter.get(data.id).renderPopup();
+      this.#filmPresenterList.get(data.id).renderPopup();
     }
 
     if (this.#renderedFilmCardsCount >= cardCount) {

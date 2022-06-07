@@ -1,13 +1,12 @@
 import { nanoid } from 'nanoid';
 import he from 'he';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import { EMOTIONS } from '../../consts';
 
 const createNewCommentTemplate = (state) => {
   const { emotion } = state;
 
-  const emojis = ['smile','sleeping','puke','angry'];
-
-  const emojiListTemplate = emojis.map((emoji) => {
+  const emojiListTemplate = EMOTIONS.map((emoji) => {
     const checked = emoji === emotion ? 'checked' : '';
 
     return(
@@ -37,7 +36,6 @@ export default class NewCommentView extends AbstractStatefulView {
 
   constructor() {
     super();
-    this._state = NewCommentView.stateToFilm();
 
     this.#setInnerHandlers();
   }
@@ -46,13 +44,6 @@ export default class NewCommentView extends AbstractStatefulView {
     this.#setInnerHandlers();
   };
 
-  static stateToFilm = () => ({
-    id: null,
-    author: null,
-    comment: null,
-    date: null,
-    emotion: null
-  });
 
   static filmToState = (state) => {
     const comment = {...state};
@@ -62,7 +53,7 @@ export default class NewCommentView extends AbstractStatefulView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#setCommentEmojiHandler);
-    this.element.querySelector('.film-details__comment-input').value = this._state.comment;
+    this.element.querySelector('.film-details__comment-input').value = this._state.comment || '';
     this.element.addEventListener('keydown', this.#handleAddComment);
   };
 

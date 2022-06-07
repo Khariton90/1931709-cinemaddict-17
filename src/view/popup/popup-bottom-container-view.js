@@ -8,7 +8,8 @@ const createPopupBottomContainerViewTemplate = (length) => (
 
         </ul>
       </section>
-    </div>`);
+    </div>`
+);
 
 export default class PopupBottomContainerView extends AbstractStatefulView {
   #length = null;
