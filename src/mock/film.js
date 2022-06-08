@@ -73,7 +73,7 @@ const generateFilm = () => {
 
   return ({
     id: nanoid(),
-    comments: [1, 2, 3, 4, 5],
+    comments: ['1'],
     filmInfo: {
       title: films[randomIndex].title.replaceAll('-', ' '),
       alternativeTitle: 'Laziness Who Sold Themselves',

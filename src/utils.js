@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, FilterTypes } from './consts';
+import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, FilterTypes, FORMAT_COMMENT } from './consts';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -9,6 +9,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const getHumanizeDate = (dueDate) => dayjs(dueDate).format(FORMAT_DATE);
+const getCommentTime = (dueDate) => dayjs(dueDate).format(FORMAT_COMMENT);
 
 const getHumanizeYear = (date) => {
   const from = date.length - LAST_FOUR_DIGITS_OF_YEAR;
@@ -25,12 +26,12 @@ const getHumanizeTime = (time) => {
   return currentTime;
 };
 
-const getFilter = () => ({
+const filter = {
   [FilterTypes.ALL]: (films) => films,
   [FilterTypes.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
   [FilterTypes.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
   [FilterTypes.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist)
-});
+};
 
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
@@ -69,4 +70,4 @@ const sortCardDate = (cardA, cardB) => {
 };
 
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, getFilter, updateItem, sortCardDate, sortCardRating };
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime };
