@@ -3,7 +3,7 @@ import AbstractView from '../framework/view/abstract-view';
 const createFilterViewTemplate = (filters, currentFilterType) => {
   const filterLinksTemplate = filters.map((filter) => {
     const { name, link, type, count } = filter;
-    const countTemplate = link === '#all' ? '' : `<span class="main-navigation__item-count">${count}</span>`;
+    const countTemplate = link === '#all' ? '' : `<span class="main-navigation__item-count" data-name="${type}">${count}</span>`;
 
     return (
       `<a href="${link}" class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''}" data-name="${type}">${name} ${countTemplate}</a>`

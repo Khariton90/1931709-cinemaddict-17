@@ -69,5 +69,12 @@ const sortCardDate = (cardA, cardB) => {
   return weight ?? dayjs(cardB.filmInfo.release.date).diff(dayjs(cardA.filmInfo.release.date));
 };
 
+const generateDescription = (description) => {
+  if (description.length > 139) {
+    return `${description.substring(0, 139)}...`;
+  }
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime };
+  return description;
+};
+
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime, generateDescription };

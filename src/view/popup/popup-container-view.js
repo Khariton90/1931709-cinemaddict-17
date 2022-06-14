@@ -1,12 +1,10 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
 const createPopupContainerViewTemplate = () => (
-  `<section class="film-details">
-    <form class="film-details__inner" action="" method="get"></form>
-  </section>`
+  '<section class="film-details"></section>'
 );
 
-export default class PopupContainerView extends AbstractView {
+export default class PopupContainerView extends AbstractStatefulView {
   get template() {
     return createPopupContainerViewTemplate();
   }
