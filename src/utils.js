@@ -62,6 +62,13 @@ const getWeightForNullDate = (dateA, dateB) => {
 
 const sortCardRating = (cardA, cardB) => cardB.filmInfo.totalRating - cardA.filmInfo.totalRating;
 
+const sortCardComments = (cardA, cardB) => cardB.comments.length - cardA.comments.length;
+
+const getDoubleCards = (cards) => {
+  const doubleCard = [cards[0], cards[1]];
+
+  return doubleCard;
+};
 
 const sortCardDate = (cardA, cardB) => {
   const weight = getWeightForNullDate(cardA.filmInfo.release.date, cardB.filmInfo.release.date);
@@ -77,4 +84,4 @@ const generateDescription = (description) => {
   return description;
 };
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime, generateDescription };
+export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime, generateDescription, sortCardComments, getDoubleCards };
