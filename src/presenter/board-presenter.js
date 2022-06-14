@@ -26,6 +26,7 @@ export default class BoardPresenter {
   #listEmptyComponent = null;
   #commentsModel = null;
   #filmPresenterList = new Map();
+  #extraPresenterList = new Map();
   #loadingComponent = new LoadingView();
   #footerComponent = null;
   #isLoading = true;
@@ -92,8 +93,6 @@ export default class BoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#filmPresenterList.get(data.id).init(data);
-        this.#clearExtraBoard();
-        this.#renderExtraBoard();
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -131,11 +130,12 @@ export default class BoardPresenter {
   }
 
   get topRatedFilms() {
-    const films = [...this.#filmsModel.films];
+    const cardCount = this.films.length;
+    const films = this.films.slice(0, Math.min(cardCount, this.#renderedFilmCardsCount));
     const filteredFilms = films.sort(sortCardRating);
     const doubleCard = getDoubleCards(filteredFilms);
 
-    if (doubleCard[0].filmInfo.totalRating) {
+    if (doubleCard[0].filmInfo.totalRating || doubleCard[0].filmInfo.totalRating) {
       return doubleCard;
     }
 
@@ -143,11 +143,12 @@ export default class BoardPresenter {
   }
 
   get mostCommentsFilms() {
-    const films = [...this.#filmsModel.films];
+    const cardCount = this.films.length;
+    const films = this.films.slice(0, Math.min(cardCount, this.#renderedFilmCardsCount));
     const filteredFilms = films.sort(sortCardComments);
     const doubleCard = getDoubleCards(filteredFilms);
 
-    if (doubleCard[0].comments.length) {
+    if (doubleCard[0].comments.length || doubleCard[1].comments.length) {
       return doubleCard;
     }
 
@@ -194,10 +195,31 @@ export default class BoardPresenter {
 
     this.#renderCards(films);
 
+    this.#clearExtraBoard();
+    this.#renderExtraBoard();
+
     if (this.#renderedFilmCardsCount >= cardCount) {
       remove(this.#showMoreBtnComponent);
     }
   };
+
+  #renderExtraBoard = () => {
+    if (this.topRatedFilms.length) {
+      this.#renderTopRated();
+      this.#renderTopRatedCards(this.topRatedFilms);
+    }
+
+    if (this.mostCommentsFilms.length) {
+      this.#renderMostCommented();
+      this.#renderMostCommentsCards(this.mostCommentsFilms);
+    }
+  };
+
+  #clearExtraBoard = () => {
+    remove(this.#mostCommentedCompnent);
+    remove(this.#topRatedComponent);
+  };
+
 
   #handleModeChange = (id) => {
     this.#filmPresenterList.forEach((presenter) => {
@@ -235,14 +257,14 @@ export default class BoardPresenter {
       this.#handleModeChange
     );
 
-    filmPresenter.init(card);
-
     if (container !== this.#boardComponent.element) {
-      this.#filmPresenterList.set(`${card.id}extra`, filmPresenter);
+      filmPresenter.init(card, container);
+      this.#extraPresenterList.set(card.id, filmPresenter);
+      return;
     }
 
+    filmPresenter.init(card);
     this.#filmPresenterList.set(card.id, filmPresenter);
-    console.log(this.#filmPresenterList);
   };
 
   #clearBoard = ({resetRenderedCardCount = false, resetSortType = false} = {}) => {
@@ -299,15 +321,7 @@ export default class BoardPresenter {
     this.#renderShowMoreBtn();
     this.#renderFooter();
 
-    if (this.topRatedFilms.length) {
-      this.#renderTopRated();
-      this.#renderTopRatedCards(this.topRatedFilms);
-    }
-
-    if (this.mostCommentsFilms.length) {
-      this.#renderMostCommented();
-      this.#renderMostCommentsCards(this.mostCommentsFilms);
-    }
+    this.#renderExtraBoard();
 
     if (data.mode === Mode.OPEN) {
       this.#filmPresenterList.get(data.id).renderPopup(data);
@@ -315,23 +329,6 @@ export default class BoardPresenter {
 
     if (this.#renderedFilmCardsCount >= cardCount) {
       remove(this.#showMoreBtnComponent);
-    }
-  };
-
-  #clearExtraBoard = () => {
-    remove(this.#topRatedComponent);
-    remove(this.#mostCommentedCompnent);
-  };
-
-  #renderExtraBoard = () => {
-    if (this.topRatedFilms.length) {
-      this.#renderTopRated();
-      this.#renderTopRatedCards(this.topRatedFilms);
-    }
-
-    if (this.mostCommentsFilms.length) {
-      this.#renderMostCommented();
-      this.#renderMostCommentsCards(this.mostCommentsFilms);
     }
   };
 }

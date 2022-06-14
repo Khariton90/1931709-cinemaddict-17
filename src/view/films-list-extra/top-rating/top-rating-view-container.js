@@ -1,29 +1,19 @@
 import AbstractStatefulView from '../../../framework/view/abstract-stateful-view';
 
-
-const createTopRatingContainerView = (topRated) => {
-    console.log(topRated);
-    return(
+const createTopRatingViewTemplate = () => (
   `<section class="films-list films-list--extra">
-    <h2 class="films-list__title">Top rated</h2>
-
-    <div class="films-list__container">
-
-    </div>
-  </section>`
-  );
-};
-
+    <h2 class="films-list__title">Most commented</h2>
+    <div class="films-list__container"></div>
+  </section>
+</section>`
+);
 
 export class TopRatingViewContainer extends AbstractStatefulView {
-  #topRated = null;
-
   get template() {
-    return createTopRatingContainerView(this.#topRated);
+    return createTopRatingViewTemplate();
   }
 
-  constructor(topRated) {
+  constructor() {
     super();
-    this.#topRated = topRated;
   }
 }

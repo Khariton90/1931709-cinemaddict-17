@@ -37,8 +37,8 @@ export default class FilmPresenter {
     return this.#commentsModel.comments;
   }
 
-  init = (card) => {
-
+  init = (card, container = this.#filmListContainer) => {
+    this.#filmListContainer = container;
     this.#card = card;
 
     const prevFilmComponent = this.#filmComponent;
@@ -51,7 +51,7 @@ export default class FilmPresenter {
     this.#filmComponent.setClickHandler(this.#handleClickOpenPopup);
 
     if (prevFilmComponent === null || prevPopupComponent === null) {
-      render(this.#filmComponent,  this.#filmListContainer);
+      render(this.#filmComponent,  container);
       return;
     }
 
