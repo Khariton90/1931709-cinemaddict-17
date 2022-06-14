@@ -1,6 +1,8 @@
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { getCommentTime } from '../../utils';
 
+const TIME_OUT = 300;
+
 const createCommentViewTemplate = (popupComment, {isDisabled, isDeliting}) => {
   const { emotion, comment, author, date, id } = popupComment;
   const dateNow = new Date().toISOString();
@@ -50,7 +52,7 @@ export default class CommentView extends AbstractStatefulView {
       setTimeout(() => this.updateElement({
         isDeliting: false,
         isDisabled: false
-      }), 300);
+      }), TIME_OUT);
     }
 
   };
