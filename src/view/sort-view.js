@@ -35,6 +35,9 @@ export default class SortView extends AbstractView {
     }
 
     evt.preventDefault();
+    if (document.body.classList.contains('hide-overflow')) {
+      document.body.classList.remove('hide-overflow');
+    }
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   };
 }

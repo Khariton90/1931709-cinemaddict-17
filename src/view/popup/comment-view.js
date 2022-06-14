@@ -1,7 +1,7 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { getCommentTime } from '../../utils';
 
-const createCommentViewTemplate = (popupComment) => {
+const createCommentViewTemplate = (popupComment, {isDisabled, isDeliting}) => {
   const { emotion, comment, author, date, id } = popupComment;
   const dateNow = new Date().toISOString();
   const img = emotion ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">` : '<img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">';
@@ -16,17 +16,17 @@ const createCommentViewTemplate = (popupComment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author || 'Anonym'}</span>
           <span class="film-details__comment-day">${date ? getCommentTime(date) : getCommentTime(dateNow)}</span>
-          <button class="film-details__comment-delete" data-id=${id}>Delete</button>
+          <button class="film-details__comment-delete" data-id=${id} ${isDisabled ? 'disabled' : ''}>${isDeliting ? 'Deleting': 'Delete'}</button>
         </p>
       </div>
     </li>`
   );};
 
-export default class CommentView extends AbstractView {
+export default class CommentView extends AbstractStatefulView {
   #commentData = null;
 
   get template() {
-    return createCommentViewTemplate(this.#commentData);
+    return createCommentViewTemplate(this.#commentData, this._state);
   }
 
   constructor(commentData) {
@@ -34,9 +34,25 @@ export default class CommentView extends AbstractView {
     this.#commentData = commentData;
   }
 
+  _restoreHandlers = () => {
+    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#handleDeleteComment);
+  };
+
   setHandleDeleteCommentClick = (callback) => {
     this._callback.deleteCommentClick = callback;
     this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#handleDeleteComment);
+  };
+
+  setHandleShakeDeleting = (aborting) => {
+    if (this._state.isDeliting === aborting.isDeleting) {
+      this.shake();
+
+      setTimeout(() => this.updateElement({
+        isDeliting: false,
+        isDisabled: false
+      }), 300);
+    }
+
   };
 
   #handleDeleteComment = (evt) => {
@@ -44,7 +60,13 @@ export default class CommentView extends AbstractView {
       return;
     }
     evt.preventDefault();
+    this.updateElement({
+      isDisabled: true,
+      isDeliting: true
+    });
+
     this._callback.deleteCommentClick(evt.target.dataset.id);
   };
+
 }
 

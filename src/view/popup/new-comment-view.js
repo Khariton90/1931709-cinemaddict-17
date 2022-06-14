@@ -1,10 +1,9 @@
-import { nanoid } from 'nanoid';
 import he from 'he';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { EMOTIONS } from '../../consts';
 
 const createNewCommentTemplate = (state) => {
-  const { emotion } = state;
+  const { emotion, isDisabled } = state;
 
   const emojiListTemplate = EMOTIONS.map((emoji) => {
     const checked = emoji === emotion ? 'checked' : '';
@@ -23,7 +22,7 @@ const createNewCommentTemplate = (state) => {
         ${emotion ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">` : ''}
       </div>
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+       <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}></textarea>
       </label>
       <div class="film-details__emoji-list">${emojiListTemplate}</div>
     </div>`
@@ -44,9 +43,9 @@ export default class NewCommentView extends AbstractStatefulView {
     this.#setInnerHandlers();
   };
 
-
   static filmToState = (state) => {
     const comment = {...state};
+    delete comment.isDisabled;
 
     return comment;
   };
@@ -67,8 +66,8 @@ export default class NewCommentView extends AbstractStatefulView {
     this.element.querySelector(fieldId).checked = true;
 
     this.updateElement({
-      emotion: this.element.querySelector(fieldId).value,
       comment: this.element.querySelector('.film-details__comment-input').value,
+      emotion: this.element.querySelector(fieldId).value,
     });
   };
 
@@ -81,15 +80,20 @@ export default class NewCommentView extends AbstractStatefulView {
     if ((evt.keyCode === 10 || evt.keyCode === 13) && evt.ctrlKey) {
       evt.preventDefault();
 
+      if (!this._state.emotion) {
+        this.shake();
+        return;
+      }
+      const fieldValue = this.element.querySelector('.film-details__comment-input').value;
+
       this.updateElement({
-        id: nanoid(),
-        comment: he.encode(this.element.querySelector('.film-details__comment-input').value),
+        comment: he.encode(fieldValue),
+        isDisabled: true,
       });
 
-      const state = NewCommentView.filmToState(this._state);
-      this._callback.addCommentKeyPress(state);
+      this.element.querySelector('.film-details__comment-input').value = fieldValue;
+      this._callback.addCommentKeyPress(NewCommentView.filmToState(this._state));
     }
-
   };
 }
 

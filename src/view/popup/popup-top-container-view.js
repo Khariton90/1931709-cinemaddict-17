@@ -1,7 +1,7 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import { getHumanizeDate, getHumanizeTime } from '../../utils';
 
-const createPopupTopContainerViewTemplate = (film) => {
+const createPopupTopContainerViewTemplate = (film, state) => {
   const { filmInfo, userDetails } = film;
   const {
     title,
@@ -81,7 +81,7 @@ const createPopupTopContainerViewTemplate = (film) => {
         </div>
       </div>
 
-      <section class="film-details__controls">
+      <section class="film-details__controls" ${state.isDisabled ? 'disabled' : ''}>
         <button type="button" class="film-details__control-button ${watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
         <button type="button" class="film-details__control-button ${alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
         <button type="button" class="film-details__control-button ${favorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
@@ -89,18 +89,29 @@ const createPopupTopContainerViewTemplate = (film) => {
     </div>`
   );};
 
-export default class PopupTopContainerView extends AbstractView {
+export default class PopupTopContainerView extends AbstractStatefulView {
   #film = null;
-
-  get template() {
-    return createPopupTopContainerViewTemplate(this.#film);
-  }
 
   constructor (film) {
     super();
 
     this.#film = film;
+    this.#setInnerHandlers();
   }
+
+  get template() {
+    return createPopupTopContainerViewTemplate(this.#film, this._state);
+  }
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('#watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
+    this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
+  };
 
   setHandleWatchlistClick(callback) {
     this._callback.watchClick = callback;
@@ -109,6 +120,10 @@ export default class PopupTopContainerView extends AbstractView {
 
   #handleWatchlistClick = (evt) => {
     evt.preventDefault();
+
+    this.updateElement({
+      isDisabled: true
+    });
     this._callback.watchClick();
   };
 
@@ -119,6 +134,10 @@ export default class PopupTopContainerView extends AbstractView {
 
   #handleAlreadyWatchedClick = (evt) => {
     evt.preventDefault();
+
+    this.updateElement({
+      isDisabled: true
+    });
     this._callback.alreadyWatched();
   };
 
@@ -129,6 +148,10 @@ export default class PopupTopContainerView extends AbstractView {
 
   #handleFavoriesClick = (evt) => {
     evt.preventDefault();
+
+    this.updateElement({
+      isDisabled: true
+    });
     this._callback.favorites();
   };
 }

@@ -1,8 +1,8 @@
-import AbstractView from '../framework/view/abstract-view';
-import { getHumanizeYear, getHumanizeTime, getHumanizeDate } from '../utils';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { getHumanizeYear, getHumanizeTime, getHumanizeDate, generateDescription } from '../utils';
 
-const createFilmCardTemplate = (film = {}, length) => {
-  const { filmInfo, userDetails } = film;
+const createFilmCardTemplate = (film = {}, state) => {
+  const { filmInfo, userDetails, comments } = film;
   const {
     title,
     totalRating,
@@ -17,18 +17,18 @@ const createFilmCardTemplate = (film = {}, length) => {
   const date = getHumanizeDate(release.date);
 
   return (
-    `<article class="film-card">
+    `<article class="film-card" width="230px" ${state.isDisabled ? 'disabled' : ''}>
       <a class="film-card__link">
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${getHumanizeYear(date)}</span>
           <span class="film-card__duration">${getHumanizeTime(runtime)}</span>
-          <span class="film-card__genre">${genre}</span>
+          <span class="film-card__genre">${genre[0]}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
-          <p class="film-card__description">${description}</p>
-          <span class="film-card__comments">${length} comments</span>
+          <p class="film-card__description">${generateDescription(description)}</p>
+          <span class="film-card__comments">${comments.length} comments</span>
       </a>
       <div class="film-card__controls">
         <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist ? 'film-card__controls-item--active' : ''}" type="button">Add to watchlist</button>
@@ -40,25 +40,36 @@ const createFilmCardTemplate = (film = {}, length) => {
 };
 
 
-export default class FilmCardView extends AbstractView {
+export default class FilmCardView extends AbstractStatefulView {
   #film = null;
-  #commentsLength = null;
 
   get template() {
-    return createFilmCardTemplate(this.#film, this.#commentsLength);
+    return createFilmCardTemplate(this.#film, this._state);
   }
 
-  constructor(film, length) {
+  constructor(film) {
     super();
     this.#film = film;
-    this.#commentsLength = length;
+
+    this.#setInnerHandlers();
   }
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-card__poster, .film-card__link').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#handleAlreadyWatchedClick);
+    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#handleFavoriesClick);
+  };
 
   setClickHandler(callback) {
     this._callback.click = callback;
 
-    this.element.querySelector('.film-card__poster').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-card__poster, .film-card__link').addEventListener('click', this.#clickHandler);
   }
 
   #clickHandler = (evt) => {
@@ -76,6 +87,7 @@ export default class FilmCardView extends AbstractView {
   #handleWatchlistClick = (evt) => {
     evt.preventDefault();
 
+    this.updateElement({isDisabled: true});
     this._callback.watchClick();
   };
 
@@ -86,7 +98,7 @@ export default class FilmCardView extends AbstractView {
 
   #handleAlreadyWatchedClick = (evt) => {
     evt.preventDefault();
-
+    this.updateElement({isDisabled: true});
     this._callback.alreadyWatched();
   };
 
@@ -97,7 +109,7 @@ export default class FilmCardView extends AbstractView {
 
   #handleFavoriesClick = (evt) => {
     evt.preventDefault();
-
+    this.updateElement({isDisabled: true});
     this._callback.favorites();
   };
 

@@ -29,7 +29,8 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const Mode = {
@@ -37,4 +38,29 @@ const Mode = {
   OPEN: 'OPEN'
 };
 
-export { EMOTIONS, AUTHORS, LAST_FOUR_DIGITS_OF_YEAR, FORMAT_DATE, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, CARDS_VIEW_STEPS, FilterTypes, SortType, UserAction, UpdateType, FORMAT_COMMENT, Mode };
+const UserTitle = {
+  NOVICE : [1, 10],
+  FAN: [11, 20],
+  MOVIE_BUFF: [21, Infinity]
+};
+
+const TimeLimit = {
+  LOWER: 350,
+  UPPER: 1000
+};
+
+const Aborting = {
+  isDisabled: false,
+  isDeleting: false
+};
+
+const Disabled = {
+  isDisabled: true,
+  isDeleting: true
+};
+
+export {
+  EMOTIONS, AUTHORS, LAST_FOUR_DIGITS_OF_YEAR, FORMAT_DATE, MINUTES_PER_HOUR,
+  TWO_DIGIT_NUMBER, CARDS_VIEW_STEPS, FilterTypes, SortType, UserAction, UpdateType,
+  FORMAT_COMMENT, Mode, UserTitle, TimeLimit, Aborting, Disabled
+};
