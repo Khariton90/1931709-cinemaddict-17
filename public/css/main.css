@@ -207,6 +207,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   padding-bottom: var(--vertical-gap);
+  width: 100%;
 }
 
 .films-list .film-card {

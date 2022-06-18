@@ -12,8 +12,4 @@ export class MostCommentedView extends AbstractStatefulView {
   get template() {
     return createMostCommentedViewTemplate();
   }
-
-  constructor() {
-    super();
-  }
 }

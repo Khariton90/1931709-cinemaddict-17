@@ -5,10 +5,6 @@ const createPopupFormInnerViewTemplate = () => (
 );
 
 export default class PopupFormInnerView extends AbstractStatefulView {
-  constructor() {
-    super();
-  }
-
   get template() {
     return createPopupFormInnerViewTemplate();
   }

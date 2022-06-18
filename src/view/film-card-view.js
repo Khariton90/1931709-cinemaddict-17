@@ -55,6 +55,7 @@ export default class FilmCardView extends AbstractStatefulView {
   }
 
   _restoreHandlers = () => {
+    document.body.classList.remove('hide-overflow');
     this.#setInnerHandlers();
   };
 

@@ -5,7 +5,7 @@ import { CARDS_VIEW_STEPS, Mode, SortType, TimeLimit, UpdateType, UserAction } f
 import ListEmptyView from '../view/list-empty-view';
 import { remove, render, RenderPosition } from '../framework/render';
 import FilmPresenter from './film-presenter';
-import { filter, getDoubleCards, sortCardComments, sortCardDate, sortCardRating } from '../utils';
+import { filter, sortCardComments, sortCardDate, sortCardRating } from '../utils';
 import LoadingView from '../view/loading-view';
 import FooterView from '../view/footer-view';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
@@ -26,7 +26,7 @@ export default class BoardPresenter {
   #listEmptyComponent = null;
   #commentsModel = null;
   #filmPresenterList = new Map();
-  #extraPresenterList = new Map();
+  #extraPresenterList = [];
   #loadingComponent = new LoadingView();
   #footerComponent = null;
   #isLoading = true;
@@ -34,6 +34,9 @@ export default class BoardPresenter {
 
   #topRatedComponent = null;
   #mostCommentedCompnent = null;
+
+  #topRatedfilmListContainer = null;
+  #mostCommentedfilmListContainer = null;
 
   constructor(boardContainer, filmsModel, filterModel, commentsModel) {
     this.#boardContainer = boardContainer;
@@ -43,12 +46,10 @@ export default class BoardPresenter {
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block(TimeLimit.LOWER, TimeLimit.UPPER);
-
     switch (actionType) {
       case UserAction.UPDATE_CARD:
         try {
@@ -130,26 +131,24 @@ export default class BoardPresenter {
   }
 
   get topRatedFilms() {
-    const cardCount = this.films.length;
-    const films = this.films.slice(0, Math.min(cardCount, this.#renderedFilmCardsCount));
-    const filteredFilms = films.sort(sortCardRating);
-    const doubleCard = getDoubleCards(filteredFilms);
+    const filteredFilms = this.films.slice(0, this.#renderedFilmCardsCount)
+      .sort(sortCardRating)
+      .slice(0, 2);
 
-    if (doubleCard[0].filmInfo.totalRating || doubleCard[0].filmInfo.totalRating) {
-      return doubleCard;
+    if (filteredFilms[0].filmInfo.totalRating) {
+      return filteredFilms;
     }
 
     return [];
   }
 
   get mostCommentsFilms() {
-    const cardCount = this.films.length;
-    const films = this.films.slice(0, Math.min(cardCount, this.#renderedFilmCardsCount));
-    const filteredFilms = films.sort(sortCardComments);
-    const doubleCard = getDoubleCards(filteredFilms);
+    const filteredFilms = this.films.slice(0, this.#renderedFilmCardsCount)
+      .sort(sortCardComments)
+      .slice(0, 2);
 
-    if (doubleCard[0].comments.length || doubleCard[1].comments.length) {
-      return doubleCard;
+    if (filteredFilms[0].comments.length) {
+      return filteredFilms;
     }
 
     return [];
@@ -222,31 +221,43 @@ export default class BoardPresenter {
 
 
   #handleModeChange = (id) => {
-    this.#filmPresenterList.forEach((presenter) => {
-      if (presenter.id !== id) {
-        presenter.resetPopup();
-      }
-    });
+    this.#extraPresenterList.forEach((presenter) => presenter[1].resetPopup());
+
+    this.#extraPresenterList
+      .slice()
+      .filter(([idPresenter]) => idPresenter === id)
+      .forEach((presenter) => {
+        presenter[1].mode = Mode.OPEN;
+        return presenter;
+      });
+  };
+
+  removeExtraPopup = () => {
+    this.#extraPresenterList.forEach((presenter) =>  presenter.resetPopup());
   };
 
   #renderCards = (films) => films.forEach((film) => this.#renderCard(film, this.#boardComponent.element));
 
   #renderTopRated = () => {
     this.#topRatedComponent = new TopRatingViewContainer(this.topRatedFilms);
+    this.#topRatedfilmListContainer = new FilmsListContainerView();
     render(this.#topRatedComponent, this.#filmsSectionComponent.element);
+    render(this.#topRatedfilmListContainer, this.#topRatedComponent.element);
   };
 
   #renderTopRatedCards = (topRatedFilms) => {
-    topRatedFilms.forEach((film) => this.#renderCard(film, this.#topRatedComponent.element.querySelector('.films-list__container')));
+    topRatedFilms.forEach((film) => this.#renderCard(film, this.#topRatedfilmListContainer.element));
   };
 
   #renderMostCommented = () => {
     this.#mostCommentedCompnent = new MostCommentedView();
+    this.#mostCommentedfilmListContainer = new FilmsListContainerView();
     render(this.#mostCommentedCompnent, this.#filmsSectionComponent.element);
+    render(this.#mostCommentedfilmListContainer, this.#mostCommentedCompnent.element);
   };
 
   #renderMostCommentsCards = (mostCommentsFilms) => {
-    mostCommentsFilms.forEach((film) => this.#renderCard(film, this.#mostCommentedCompnent.element.querySelector('.films-list__container')));
+    mostCommentsFilms.forEach((film) => this.#renderCard(film, this.#mostCommentedfilmListContainer.element));
   };
 
   #renderCard = (card, container) => {
@@ -257,9 +268,10 @@ export default class BoardPresenter {
       this.#handleModeChange
     );
 
+    this.#extraPresenterList.push([card.id, filmPresenter]);
+
     if (container !== this.#boardComponent.element) {
       filmPresenter.init(card, container);
-      this.#extraPresenterList.set(card.id, filmPresenter);
       return;
     }
 
@@ -272,6 +284,7 @@ export default class BoardPresenter {
 
     this.#filmPresenterList.forEach((presenter) => presenter.destroy());
     this.#filmPresenterList.clear();
+    this.#extraPresenterList = [];
 
     remove(this.#sortComponent);
     remove(this.#footerComponent);
@@ -326,7 +339,6 @@ export default class BoardPresenter {
     if (data.mode === Mode.OPEN) {
       this.#filmPresenterList.get(data.id).renderPopup(data);
     }
-
     if (this.#renderedFilmCardsCount >= cardCount) {
       remove(this.#showMoreBtnComponent);
     }
