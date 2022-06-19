@@ -56,8 +56,10 @@ export default class BoardPresenter {
           await this.#filmsModel.updateFilm(updateType, update);
           this.#setScroll(update, actionType);
         } catch(err) {
-          this.#filmPresenterList.get(update.id).setAbortingUpdated();
-          this.#setScroll(update, actionType);
+          if (this.films.length) {
+            this.#filmPresenterList.get(update.id).setAbortingUpdated();
+            this.#setScroll(update, actionType);
+          }
         }
         break;
       case UserAction.ADD_COMMENT:
@@ -219,7 +221,6 @@ export default class BoardPresenter {
     remove(this.#topRatedComponent);
   };
 
-
   #handleModeChange = (id) => {
     this.#extraPresenterList.forEach((presenter) => presenter[1].resetPopup());
 
@@ -230,10 +231,6 @@ export default class BoardPresenter {
         presenter[1].mode = Mode.OPEN;
         return presenter;
       });
-  };
-
-  removeExtraPopup = () => {
-    this.#extraPresenterList.forEach((presenter) =>  presenter.resetPopup());
   };
 
   #renderCards = (films) => films.forEach((film) => this.#renderCard(film, this.#boardComponent.element));
@@ -333,7 +330,6 @@ export default class BoardPresenter {
     this.#renderCards(films);
     this.#renderShowMoreBtn();
     this.#renderFooter();
-
     this.#renderExtraBoard();
 
     if (data.mode === Mode.OPEN) {

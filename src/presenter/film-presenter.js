@@ -140,7 +140,6 @@ export default class FilmPresenter {
     this.#mode = Mode.OPEN;
 
     this.#popupComponent = new PopupContainerView();
-
     render(this.#popupComponent, this.#filmListContainer);
 
     this.#popupTopContainerComponent = new PopupTopContainerView(this.#card);
