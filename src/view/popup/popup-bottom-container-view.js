@@ -9,15 +9,16 @@ const createPopupBottomContainerViewTemplate = (length) => (
 );
 
 export default class PopupBottomContainerView extends AbstractStatefulView {
+  constructor(length) {
+    super();
+
+    this.#length = length;
+  }
+
   #length = null;
 
   get template() {
     return createPopupBottomContainerViewTemplate(this.#length);
-  }
-
-  constructor(length) {
-    super();
-    this.#length = length;
   }
 }
 

@@ -1,15 +1,13 @@
 import AbstractStatefulView from '../../../framework/view/abstract-stateful-view';
 
-const createMostCommentedViewTemplate = () => (
+const createMostCommentedViewContainerTemplate = () => (
   `<section class="films-list films-list--extra">
     <h2 class="films-list__title">Most commented</h2>
-    <div class="films-list__container"></div>
-  </section>
-</section>`
+  </section>`
 );
 
-export class MostCommentedView extends AbstractStatefulView {
+export class MostCommentedViewContainer extends AbstractStatefulView {
   get template() {
-    return createMostCommentedViewTemplate();
+    return createMostCommentedViewContainerTemplate();
   }
 }

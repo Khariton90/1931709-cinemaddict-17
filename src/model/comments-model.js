@@ -2,12 +2,17 @@ import ApiService from '../framework/api-service';
 import Observable from '../framework/observable';
 
 export default class CommentsModel extends Observable {
+  constructor(commentsApiService) {
+    super();
+
+    this.#commentsApiService = commentsApiService;
+  }
+
   #comments = [];
   #commentsApiService = null;
 
-  constructor(commentsApiService) {
-    super();
-    this.#commentsApiService = commentsApiService;
+  get comments() {
+    return this.#comments;
   }
 
   init = async (update) => {
@@ -20,10 +25,6 @@ export default class CommentsModel extends Observable {
 
     this._notify(update);
   };
-
-  get comments() {
-    return this.#comments;
-  }
 
   addComment = async (updateType, update) => {
     try {

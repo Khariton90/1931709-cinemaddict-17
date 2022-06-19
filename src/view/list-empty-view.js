@@ -16,15 +16,16 @@ const createListEmptyViewTemplate = (filterType) => (
 );
 
 export default class ListEmptyView extends AbstractView {
+  constructor(filterType) {
+    super();
+
+    this.#filterType = filterType;
+  }
+
   #filterType = 'All movies';
 
   get template() {
     return createListEmptyViewTemplate(this.#filterType);
-  }
-
-  constructor(filterType) {
-    super();
-    this.#filterType = filterType;
   }
 }
 

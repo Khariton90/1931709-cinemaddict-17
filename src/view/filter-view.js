@@ -17,6 +17,13 @@ const createFilterViewTemplate = (filters, currentFilterType) => {
 };
 
 export default class FilterView extends AbstractView {
+  constructor(filters, currentFilterType) {
+    super();
+
+    this.#filters = filters;
+    this.#currentFilterType = currentFilterType;
+  }
+
   #filters = null;
   #currentFilterType = null;
 
@@ -24,19 +31,14 @@ export default class FilterView extends AbstractView {
     return createFilterViewTemplate(this.#filters, this.#currentFilterType);
   }
 
-  constructor(filters, currentFilterType) {
-    super();
-    this.#filters = filters;
-    this.#currentFilterType = currentFilterType;
-  }
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.filterTypeChange(evt.target.dataset.name);
+  };
 
   setFilterTypeChangeHandler = (callback) => {
     this._callback.filterTypeChange = callback;
     this.element.addEventListener('click', this.#filterTypeChangeHandler);
-  };
-
-  #filterTypeChangeHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.dataset.name);
   };
 }

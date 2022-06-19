@@ -26,28 +26,21 @@ const createNewCommentTemplate = (state) => {
       </label>
       <div class="film-details__emoji-list">${emojiListTemplate}</div>
     </div>`
-  );};
+  );
+};
 
 export default class NewCommentView extends AbstractStatefulView {
+  constructor() {
+    super();
+    this.#setInnerHandlers();
+  }
+
   get template() {
     return createNewCommentTemplate(this._state);
   }
 
-  constructor() {
-    super();
-
-    this.#setInnerHandlers();
-  }
-
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-  };
-
-  static filmToState = (state) => {
-    const comment = {...state};
-    delete comment.isDisabled;
-
-    return comment;
   };
 
   #setInnerHandlers = () => {
@@ -55,7 +48,6 @@ export default class NewCommentView extends AbstractStatefulView {
     this.element.querySelector('.film-details__comment-input').value = this._state.comment || '';
     this.element.addEventListener('keydown', this.#handleAddComment);
   };
-
 
   #setCommentEmojiHandler = (evt) => {
     if (evt.target.tagName !== 'IMG') {
@@ -69,11 +61,6 @@ export default class NewCommentView extends AbstractStatefulView {
       comment: this.element.querySelector('.film-details__comment-input').value,
       emotion: this.element.querySelector(fieldId).value,
     });
-  };
-
-  setHandleAddCommentKeyPress = (callback) => {
-    this._callback.addCommentKeyPress = callback;
-    this.element.addEventListener('keypress', this.#handleAddComment);
   };
 
   #handleAddComment = (evt) => {
@@ -94,6 +81,18 @@ export default class NewCommentView extends AbstractStatefulView {
       this.element.querySelector('.film-details__comment-input').value = fieldValue;
       this._callback.addCommentKeyPress(NewCommentView.filmToState(this._state));
     }
+  };
+
+  setHandleAddCommentKeyPress = (callback) => {
+    this._callback.addCommentKeyPress = callback;
+    this.element.addEventListener('keypress', this.#handleAddComment);
+  };
+
+  static filmToState = (state) => {
+    const comment = {...state};
+    delete comment.isDisabled;
+
+    return comment;
   };
 }
 

@@ -30,22 +30,18 @@ const createPopupTopContainerViewTemplate = (film, state) => {
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
           <img class="film-details__poster-img" src="${poster}" alt="">
-
             <p class="film-details__age">18+</p>
         </div>
-
         <div class="film-details__info">
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${title}</h3>
               <p class="film-details__title-original">Original: ${alternativeTitle}</p>
             </div>
-
             <div class="film-details__rating">
               <p class="film-details__total-rating">${totalRating}</p>
             </div>
           </div>
-
           <table class="film-details__table">
             <tr class="film-details__row">
               <td class="film-details__term">${director}</td>
@@ -80,7 +76,6 @@ const createPopupTopContainerViewTemplate = (film, state) => {
           <p class="film-details__film-description">${description}</p>
         </div>
       </div>
-
       <section class="film-details__controls" ${state.isDisabled ? 'disabled' : ''}>
         <button type="button" class="film-details__control-button ${watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
         <button type="button" class="film-details__control-button ${alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
@@ -90,14 +85,14 @@ const createPopupTopContainerViewTemplate = (film, state) => {
   );};
 
 export default class PopupTopContainerView extends AbstractStatefulView {
-  #film = null;
-
   constructor (film) {
     super();
 
     this.#film = film;
     this.#setInnerHandlers();
   }
+
+  #film = null;
 
   get template() {
     return createPopupTopContainerViewTemplate(this.#film, this._state);
@@ -113,11 +108,6 @@ export default class PopupTopContainerView extends AbstractStatefulView {
     this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
   };
 
-  setHandleWatchlistClick(callback) {
-    this._callback.watchClick = callback;
-    this.element.querySelector('#watchlist').addEventListener('click', this.#handleWatchlistClick);
-  }
-
   #handleWatchlistClick = (evt) => {
     evt.preventDefault();
 
@@ -126,11 +116,6 @@ export default class PopupTopContainerView extends AbstractStatefulView {
     });
     this._callback.watchClick();
   };
-
-  setHandleAlreadyWatchedClick(callback) {
-    this._callback.alreadyWatched = callback;
-    this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
-  }
 
   #handleAlreadyWatchedClick = (evt) => {
     evt.preventDefault();
@@ -141,11 +126,6 @@ export default class PopupTopContainerView extends AbstractStatefulView {
     this._callback.alreadyWatched();
   };
 
-  setHandleFavoritesClick(callback) {
-    this._callback.favorites = callback;
-    this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
-  }
-
   #handleFavoriesClick = (evt) => {
     evt.preventDefault();
 
@@ -154,5 +134,20 @@ export default class PopupTopContainerView extends AbstractStatefulView {
     });
     this._callback.favorites();
   };
+
+  setHandleWatchlistClick(callback) {
+    this._callback.watchClick = callback;
+    this.element.querySelector('#watchlist').addEventListener('click', this.#handleWatchlistClick);
+  }
+
+  setHandleFavoritesClick(callback) {
+    this._callback.favorites = callback;
+    this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
+  }
+
+  setHandleAlreadyWatchedClick(callback) {
+    this._callback.alreadyWatched = callback;
+    this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
+  }
 }
 

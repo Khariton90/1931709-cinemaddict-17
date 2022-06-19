@@ -25,19 +25,32 @@ const createCommentViewTemplate = (popupComment, {isDisabled, isDeliting}) => {
 };
 
 export default class CommentView extends AbstractStatefulView {
+  constructor(commentData) {
+    super();
+    this.#commentData = commentData;
+  }
+
   #commentData = null;
 
   get template() {
     return createCommentViewTemplate(this.#commentData, this._state);
   }
 
-  constructor(commentData) {
-    super();
-    this.#commentData = commentData;
-  }
-
   _restoreHandlers = () => {
     this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#handleDeleteComment);
+  };
+
+  #handleDeleteComment = (evt) => {
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+    evt.preventDefault();
+    this.updateElement({
+      isDisabled: true,
+      isDeliting: true
+    });
+
+    this._callback.deleteCommentClick(evt.target.dataset.id);
   };
 
   setHandleDeleteCommentClick = (callback) => {
@@ -54,21 +67,6 @@ export default class CommentView extends AbstractStatefulView {
         isDisabled: false
       }), TIME_OUT);
     }
-
   };
-
-  #handleDeleteComment = (evt) => {
-    if (evt.target.tagName !== 'BUTTON') {
-      return;
-    }
-    evt.preventDefault();
-    this.updateElement({
-      isDisabled: true,
-      isDeliting: true
-    });
-
-    this._callback.deleteCommentClick(evt.target.dataset.id);
-  };
-
 }
 

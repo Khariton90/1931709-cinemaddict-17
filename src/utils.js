@@ -5,6 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 const getHumanizeDate = (dueDate) => dayjs(dueDate).format(FORMAT_DATE);
+
 const getCommentTime = (dueDate) => dayjs().from(dayjs(dueDate));
 
 const getHumanizeYear = (date) => {

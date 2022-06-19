@@ -6,13 +6,6 @@ import HeaderView from '../view/header-view';
 import RatingView from '../view/rating-view';
 
 export default class FilterPresenter {
-  #filterContainer = null;
-  #filterComponent = null;
-  #filterModel = null;
-  #filmsModel = null;
-  #headerComponent = null;
-  #ratingComponent = null;
-
   constructor(filterContainer, filterModel, filmsModel) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
@@ -21,6 +14,13 @@ export default class FilterPresenter {
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
+
+  #filterContainer = null;
+  #filterComponent = null;
+  #filterModel = null;
+  #filmsModel = null;
+  #headerComponent = null;
+  #ratingComponent = null;
 
   get filters() {
     const films = this.#filmsModel.films;
@@ -59,13 +59,13 @@ export default class FilterPresenter {
     const prevRatingComponent = this.#ratingComponent;
 
     this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
-    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
-
     this.#ratingComponent = new RatingView(filters);
+    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
       this.#renderHeader();
+
       render(this.#ratingComponent, this.#headerComponent.element);
       return;
     }
@@ -82,11 +82,6 @@ export default class FilterPresenter {
     render(this.#headerComponent, this.#filterContainer, RenderPosition.BEFOREBEGIN);
   };
 
-
-  #handleModelEvent = () => {
-    this.init();
-  };
-
   #handleFilterTypeChange = (filterType) => {
     if (this.#filterModel.filter === filterType) {
       return;
@@ -95,4 +90,7 @@ export default class FilterPresenter {
     this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
   };
 
+  #handleModelEvent = () => {
+    this.init();
+  };
 }

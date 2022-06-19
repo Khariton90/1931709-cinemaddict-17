@@ -12,22 +12,17 @@ const createSortTemplate = (currentSortType) => (
 
 
 export default class SortView extends AbstractView {
-  #currentSortType = null;
-
   constructor(currentSortType) {
     super();
+
     this.#currentSortType = currentSortType;
   }
+
+  #currentSortType = null;
 
   get template() {
     return createSortTemplate(this.#currentSortType);
   }
-
-  setSortTypeChangeHandler = (callback) => {
-    this._callback.sortTypeChange = callback;
-
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
-  };
 
   #sortTypeChangeHandler = (evt) => {
     if (evt.target.tagName !== 'A') {
@@ -38,6 +33,12 @@ export default class SortView extends AbstractView {
     if (document.body.classList.contains('hide-overflow')) {
       document.body.classList.remove('hide-overflow');
     }
+
     this._callback.sortTypeChange(evt.target.dataset.sortType);
+  };
+
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   };
 }
