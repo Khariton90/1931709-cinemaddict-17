@@ -1,15 +1,11 @@
 import dayjs from 'dayjs';
-import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, FilterTypes, FORMAT_COMMENT } from './consts';
+import { FORMAT_DATE, LAST_FOUR_DIGITS_OF_YEAR, MINUTES_PER_HOUR, TWO_DIGIT_NUMBER, FilterTypes } from './consts';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower));
-};
+dayjs.extend(relativeTime);
 
 const getHumanizeDate = (dueDate) => dayjs(dueDate).format(FORMAT_DATE);
-const getCommentTime = (dueDate) => dayjs(dueDate).format(FORMAT_COMMENT);
+const getCommentTime = (dueDate) => dayjs().from(dayjs(dueDate));
 
 const getHumanizeYear = (date) => {
   const from = date.length - LAST_FOUR_DIGITS_OF_YEAR;
@@ -62,6 +58,7 @@ const getWeightForNullDate = (dateA, dateB) => {
 
 const sortCardRating = (cardA, cardB) => cardB.filmInfo.totalRating - cardA.filmInfo.totalRating;
 
+const sortCardComments = (cardA, cardB) => cardB.comments.length - cardA.comments.length;
 
 const sortCardDate = (cardA, cardB) => {
   const weight = getWeightForNullDate(cardA.filmInfo.release.date, cardB.filmInfo.release.date);
@@ -77,4 +74,4 @@ const generateDescription = (description) => {
   return description;
 };
 
-export { getRandomInteger, getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime, generateDescription };
+export { getHumanizeDate, getHumanizeTime, getHumanizeYear, filter, updateItem, sortCardDate, sortCardRating, getCommentTime, generateDescription, sortCardComments };

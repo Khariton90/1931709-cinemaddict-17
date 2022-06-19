@@ -37,9 +37,17 @@ export default class FilmPresenter {
     return this.#commentsModel.comments;
   }
 
-  init = (card) => {
-    this.#card = card;
+  get mode() {
+    return this.#mode;
+  }
 
+  set mode(value){
+    this.#mode = value;
+  }
+
+  init = (card, container = this.#filmListContainer) => {
+    this.#filmListContainer = container;
+    this.#card = card;
     const prevFilmComponent = this.#filmComponent;
     const prevPopupComponent = this.#popupComponent;
     this.#filmComponent = new FilmCardView(this.#card);
@@ -50,7 +58,7 @@ export default class FilmPresenter {
     this.#filmComponent.setClickHandler(this.#handleClickOpenPopup);
 
     if (prevFilmComponent === null || prevPopupComponent === null) {
-      render(this.#filmComponent, this.#filmListContainer);
+      render(this.#filmComponent,  container);
       return;
     }
 
@@ -78,6 +86,7 @@ export default class FilmPresenter {
       remove(this.#popupTopContainerComponent);
       remove(this.#popupBottomContainerComponent);
       remove(this.#popupCommentListComponent);
+      this.#commentsList = [];
       this.#mode = Mode.DEFAULT;
     }
   };
@@ -121,9 +130,7 @@ export default class FilmPresenter {
   setScroll = (action) => {
     if ((action === UserAction.ADD_COMMENT) || (action === UserAction.DELETE_COMMENT)) {
       this.#popupComponent.element.scrollTo({top: this.#popupComponent.element.scrollHeight, behavior: 'smooth'});
-      return;
     }
-    this.#popupComponent.element.scrollTo({top: this.#popupComponent.element.scrollHeight / 2});
   };
 
   renderPopup = (card = {}) => {
@@ -131,6 +138,7 @@ export default class FilmPresenter {
 
     this.#changeMode(this.#card.id);
     this.#mode = Mode.OPEN;
+
     this.#popupComponent = new PopupContainerView();
     render(this.#popupComponent, this.#filmListContainer);
 
