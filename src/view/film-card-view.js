@@ -41,14 +41,14 @@ const createFilmCardTemplate = (film = {}, state) => {
 
 
 export default class FilmCardView extends AbstractStatefulView {
+  #film = null;
+
   constructor(film) {
     super();
     this.#film = film;
 
     this.#setInnerHandlers();
   }
-
-  #film = null;
 
   get template() {
     return createFilmCardTemplate(this.#film, this._state);
@@ -57,42 +57,6 @@ export default class FilmCardView extends AbstractStatefulView {
   _restoreHandlers = () => {
     document.body.classList.remove('hide-overflow');
     this.#setInnerHandlers();
-  };
-
-  #setInnerHandlers = () => {
-    this.element.querySelector('.film-card__poster, .film-card__link').addEventListener('click', this.#clickHandler);
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
-    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#handleAlreadyWatchedClick);
-    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#handleFavoriesClick);
-  };
-
-  #clickHandler = (evt) => {
-    evt.preventDefault();
-
-    document.body.classList.add('hide-overflow');
-    this._callback.click();
-  };
-
-  #handleWatchlistClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({isDisabled: true});
-    this._callback.watchClick();
-  };
-
-  #handleAlreadyWatchedClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({isDisabled: true});
-    this._callback.alreadyWatched();
-  };
-
-  #handleFavoriesClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({isDisabled: true});
-    this._callback.favorites();
   };
 
   setClickHandler(callback) {
@@ -114,4 +78,40 @@ export default class FilmCardView extends AbstractStatefulView {
     this._callback.watchClick = callback;
     this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
   }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-card__poster, .film-card__link').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#handleAlreadyWatchedClick);
+    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#handleFavoriesClick);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    document.body.classList.add('hide-overflow');
+
+    this._callback.click();
+  };
+
+  #handleWatchlistClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({isDisabled: true});
+
+    this._callback.watchClick();
+  };
+
+  #handleAlreadyWatchedClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({isDisabled: true});
+
+    this._callback.alreadyWatched();
+  };
+
+  #handleFavoriesClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({isDisabled: true});
+
+    this._callback.favorites();
+  };
 }

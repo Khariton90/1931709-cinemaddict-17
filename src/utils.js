@@ -20,6 +20,7 @@ const getHumanizeTime = (time) => {
   const remainMinutes = time - (hours * MINUTES_PER_HOUR);
   const minutes = remainMinutes < TWO_DIGIT_NUMBER ? `0${remainMinutes}` : remainMinutes;
   const currentTime = `${hours}h ${minutes}m`;
+
   return currentTime;
 };
 

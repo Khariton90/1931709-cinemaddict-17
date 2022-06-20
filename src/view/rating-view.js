@@ -28,13 +28,12 @@ const createRatingTemplate = (filter) => {
 
 
 export default class RatingView extends AbstractView {
+  #filter = null;
+
   constructor(filter) {
     super();
-
     this.#filter = filter;
   }
-
-  #filter = null;
 
   get template() {
     return createRatingTemplate(this.#filter);

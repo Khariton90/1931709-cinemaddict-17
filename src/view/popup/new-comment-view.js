@@ -49,6 +49,11 @@ export default class NewCommentView extends AbstractStatefulView {
     this.element.addEventListener('keydown', this.#handleAddComment);
   };
 
+  setHandleAddCommentKeyPress = (callback) => {
+    this._callback.addCommentKeyPress = callback;
+    this.element.addEventListener('keypress', this.#handleAddComment);
+  };
+
   #setCommentEmojiHandler = (evt) => {
     if (evt.target.tagName !== 'IMG') {
       return;
@@ -71,6 +76,7 @@ export default class NewCommentView extends AbstractStatefulView {
         this.shake();
         return;
       }
+
       const fieldValue = this.element.querySelector('.film-details__comment-input').value;
 
       this.updateElement({
@@ -81,11 +87,6 @@ export default class NewCommentView extends AbstractStatefulView {
       this.element.querySelector('.film-details__comment-input').value = fieldValue;
       this._callback.addCommentKeyPress(NewCommentView.filmToState(this._state));
     }
-  };
-
-  setHandleAddCommentKeyPress = (callback) => {
-    this._callback.addCommentKeyPress = callback;
-    this.element.addEventListener('keypress', this.#handleAddComment);
   };
 
   static filmToState = (state) => {

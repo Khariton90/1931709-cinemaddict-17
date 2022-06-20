@@ -14,16 +14,6 @@ import { MostCommentedViewContainer } from '../view/films-list-extra/most-commen
 import FilmsSectionView from '../view/films-section-view';
 
 export default class BoardPresenter {
-  constructor(boardContainer, filmsModel, filterModel, commentsModel) {
-    this.#boardContainer = boardContainer;
-    this.#filmsModel = filmsModel;
-    this.#filterModel = filterModel;
-    this.#commentsModel = commentsModel;
-
-    this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
-  }
-
   #renderedFilmCardsCount = CARDS_VIEW_STEPS;
   #filmsModel = null;
   #boardContainer = null;
@@ -45,6 +35,16 @@ export default class BoardPresenter {
   #mostCommentedComponent = null;
   #topRatedfilmListContainer = null;
   #mostCommentedfilmListContainer = null;
+
+  constructor(boardContainer, filmsModel, filterModel, commentsModel) {
+    this.#boardContainer = boardContainer;
+    this.#filmsModel = filmsModel;
+    this.#filterModel = filterModel;
+    this.#commentsModel = commentsModel;
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+  }
 
   get films() {
     const filterType = this.#filterModel.filter;
@@ -329,6 +329,7 @@ export default class BoardPresenter {
     if (data.mode === Mode.OPEN) {
       this.#filmPresenterList.get(data.id).renderPopup(data);
     }
+
     if (this.#renderedFilmCardsCount >= cardCount) {
       remove(this.#showMoreBtnComponent);
     }

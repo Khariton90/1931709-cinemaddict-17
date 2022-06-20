@@ -2,14 +2,13 @@ import { UpdateType } from '../consts';
 import Observable from '../framework/observable';
 
 export default class FilmsModel extends Observable {
-  constructor(filmsApiService) {
-    super();
-
-    this.#filmsApiService = filmsApiService;
-  }
-
   #filmsApiService = null;
   #films = [];
+
+  constructor(filmsApiService) {
+    super();
+    this.#filmsApiService = filmsApiService;
+  }
 
   get films() {
     return this.#films;

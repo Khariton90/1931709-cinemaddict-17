@@ -9,6 +9,16 @@ export default class PopupContainerView extends AbstractStatefulView {
     return createPopupContainerViewTemplate();
   }
 
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  }
+
+  setKeyDownHandler(callback) {
+    this._callback.keydown = callback;
+    document.addEventListener('keydown', this.#keyDownHandler);
+  }
+
   #clickHandler = (evt) => {
     evt.preventDefault();
 
@@ -26,15 +36,5 @@ export default class PopupContainerView extends AbstractStatefulView {
       document.removeEventListener('keydown', this.#keyDownHandler);
     }
   };
-
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
-  }
-
-  setKeyDownHandler(callback) {
-    this._callback.keydown = callback;
-    document.addEventListener('keydown', this.#keyDownHandler);
-  }
 }
 

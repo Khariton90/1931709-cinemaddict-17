@@ -85,14 +85,14 @@ const createPopupTopContainerViewTemplate = (film, state) => {
   );};
 
 export default class PopupTopContainerView extends AbstractStatefulView {
+  #film = null;
+
   constructor (film) {
     super();
-
     this.#film = film;
+
     this.#setInnerHandlers();
   }
-
-  #film = null;
 
   get template() {
     return createPopupTopContainerViewTemplate(this.#film, this._state);
@@ -100,39 +100,6 @@ export default class PopupTopContainerView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-  };
-
-  #setInnerHandlers = () => {
-    this.element.querySelector('#watchlist').addEventListener('click', this.#handleWatchlistClick);
-    this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
-    this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
-  };
-
-  #handleWatchlistClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({
-      isDisabled: true
-    });
-    this._callback.watchClick();
-  };
-
-  #handleAlreadyWatchedClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({
-      isDisabled: true
-    });
-    this._callback.alreadyWatched();
-  };
-
-  #handleFavoriesClick = (evt) => {
-    evt.preventDefault();
-
-    this.updateElement({
-      isDisabled: true
-    });
-    this._callback.favorites();
   };
 
   setHandleWatchlistClick(callback) {
@@ -149,5 +116,38 @@ export default class PopupTopContainerView extends AbstractStatefulView {
     this._callback.alreadyWatched = callback;
     this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
   }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('#watchlist').addEventListener('click', this.#handleWatchlistClick);
+    this.element.querySelector('#watched').addEventListener('click', this.#handleAlreadyWatchedClick);
+    this.element.querySelector('#favorite').addEventListener('click', this.#handleFavoriesClick);
+  };
+
+  #handleWatchlistClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      isDisabled: true
+    });
+
+    this._callback.watchClick();
+  };
+
+  #handleAlreadyWatchedClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      isDisabled: true
+    });
+
+    this._callback.alreadyWatched();
+  };
+
+  #handleFavoriesClick = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      isDisabled: true
+    });
+
+    this._callback.favorites();
+  };
 }
 

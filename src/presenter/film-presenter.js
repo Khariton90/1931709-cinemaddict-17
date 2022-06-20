@@ -10,13 +10,6 @@ import PopupFormInnerView from '../view/popup/popup-form-inner-view';
 import PopupCommentListView from '../view/popup/popup-comment-list-view';
 
 export default class FilmPresenter {
-  constructor(filmListContainer, commentsModel, changeData, changeMode) {
-    this.#filmListContainer = filmListContainer;
-    this.#commentsModel = commentsModel;
-    this.#changeData = changeData;
-    this.#changeMode = changeMode;
-  }
-
   #filmListContainer = null;
   #filmComponent = null;
   #popupComponent = null;
@@ -31,6 +24,13 @@ export default class FilmPresenter {
   #mode = Mode.DEFAULT;
   #changeMode = null;
   #commentsList = [];
+
+  constructor(filmListContainer, commentsModel, changeData, changeMode) {
+    this.#filmListContainer = filmListContainer;
+    this.#commentsModel = commentsModel;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
+  }
 
   get comments() {
     return this.#commentsModel.comments;
@@ -149,11 +149,6 @@ export default class FilmPresenter {
     }
   };
 
-  #handleClickOpenPopup = async () => {
-    this.#commentsModel.init(this.#card)
-      .finally(() => this.renderPopup(this.#card));
-  };
-
   #renderComments = () => this.comments.forEach((comment) => this.#renderComment(comment));
 
   #renderComment = (comment) => {
@@ -169,6 +164,11 @@ export default class FilmPresenter {
     render(this.#newCommentComponent, this.#popupBottomContainerComponent.element);
 
     this.#newCommentComponent.setHandleAddCommentKeyPress(this.#handleAddCommentKeyPress);
+  };
+
+  #handleClickOpenPopup = async () => {
+    this.#commentsModel.init(this.#card)
+      .finally(() => this.renderPopup(this.#card));
   };
 
   #handleWatchlistClick = () => {

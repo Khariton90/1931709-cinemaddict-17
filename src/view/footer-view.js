@@ -10,13 +10,12 @@ const createFooterViewTemplate = (count) => (
 );
 
 export default class FooterView extends AbstractView {
+  #count = null;
+
   constructor(count) {
     super();
-
     this.#count = count;
   }
-
-  #count = null;
 
   get template() {
     return createFooterViewTemplate(this.#count);
